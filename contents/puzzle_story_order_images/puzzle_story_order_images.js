@@ -39,26 +39,6 @@ const imageSources = [
     "images/image24.png"
 ];
 
-
-// Fetch the JSON and initialize the images
-async function initializeImages() {
-    try {
-        // Fetch the JSON file
-        const response = await fetch('images.json');
-        const data = await response.json();
-
-        // Use the fetched data to initialize imageSources
-        const imageSources = data.imageSources;
-        const imagesWithIndices = imageSources.map((src, index) => ({ src, index }));
-
-        // Proceed with the rest of the code using imagesWithIndices
-        setupPuzzle(imagesWithIndices);
-    } catch (error) {
-        console.error('Error loading images:', error);
-    }
-}
-
-
 const imagesWithIndices = imageSources.map((src, index) => ({ src, index }));
 
 const numImagesSelect = 6; // Number of images to display
