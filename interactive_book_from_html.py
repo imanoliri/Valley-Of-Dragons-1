@@ -104,9 +104,79 @@ def extract_images(html_content):
     return image_list
 
 
-def save_to_json(data, output_file_path):
-    with open(output_file_path, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4)
+def add_content_tab(chapters, tab_names, content_dir):
+    chapters.append(generate_contents_page(get_content_links(content_dir)))
+    tab_names.append("Contents")
+    return chapters, tab_names
+
+
+def get_content_links(base_path):
+    return [
+        f"{base_path}/{content_name}/{content_name}.html"
+        for content_name in os.listdir(base_path)
+        if os.path.isfile(f"{base_path}/{content_name}/{content_name}.html")
+    ]
+
+
+def generate_contents_page(content_links):
+    # HTML template for the contents page without template syntax
+    html_template = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Contents</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f9f9f9;
+            }
+            h1 {
+                text-align: center;
+            }
+            .contents-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+                margin-top: 20px;
+            }
+            .contents-grid button {
+                padding: 10px;
+                cursor: pointer;
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                text-align: center;
+                transition: background-color 0.3s;
+            }
+            .contents-grid button:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Contents</h1>
+        <div class="contents-grid">
+            <!-- Buttons will be inserted here -->
+            {buttons}
+        </div>
+    </body>
+    </html>
+    """
+
+    def get_name_from_file_path(fp):
+        return fp.split("/")[-1].split(".")[0].replace("_", " ")
+
+    # Generate the button HTML
+    button_html = "\n".join(
+        f"<button onclick=\"window.location.href='{content}'\">{get_name_from_file_path(content)}</button>"
+        for content in content_links
+    )
+
+    # Inject the button HTML into the template
+    return html_template.replace("{buttons}", button_html)
 
 
 def generate_static_html(chapters, tab_names, title):
@@ -138,10 +208,18 @@ def generate_static_html(chapters, tab_names, title):
 
     # Use Jinja2 to render the template with chapters, tab names, and title
     template = Template(html_template)
-    return template.render(chapters=chapters, tab_names=tab_names, title=title)
+    return template.render(
+        chapters=chapters, tab_names=tab_names, title=title.replace("_", " ")
+    )
+
+
+def save_to_json(data, output_file_path):
+    with open(output_file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4)
 
 
 def save(data, output_file_path):
+
     # Write the rendered HTML to the output file
     with open(output_file_path, "w", encoding="utf-8") as file:
         file.write(data)
@@ -150,33 +228,25 @@ def save(data, output_file_path):
 # Main function to run the script
 def main():
 
-    html_file_path = "The_Valley_of_Dragons_1_Attack_of_the_Dark_God_v2.html"  # Replace with your HTML file path
-    images_dir = "images"
-    export_dir = "EXPORT"
-    book_styles_file = "interactive_book.css"
-    book_script_file = "interactive_book.js"
+    # Replace with your HTML file path
+    html_file_path = "book.html"
+    contents_dir = "contents"
     title = html_file_path.split("/")[-1].split(".")[0]
-    output_file_path = f"{export_dir}/interactive_book.html"
-    os.makedirs(export_dir, exist_ok=True)
+    output_file_path = "interactive_book.html"
 
+    # Read html
     html_book = read_html_book(html_file_path)
+    save_to_json(extract_media(html_book), "interactive_book_media.json")
+    save_to_json(extract_images(html_book), "interactive_book_images.json")
 
-    save_to_json(extract_media(html_book), f"{export_dir}/interactive_book_media.json")
-    save_to_json(
-        extract_images(html_book), f"{export_dir}/interactive_book_images.json"
-    )
-
+    # Generate html interactive book
     chapters, tab_names = parse_html_book(html_book)
+    chapters, tab_names = add_content_tab(chapters, tab_names, contents_dir)
     interactive_book = generate_static_html(chapters, tab_names, title)
-    if EXPORT:
-        shutil.copyfile(html_file_path, f"{export_dir}/{html_file_path}")
-        shutil.copyfile(book_styles_file, f"{export_dir}/{book_styles_file}")
-        shutil.copyfile(book_script_file, f"{export_dir}/{book_script_file}")
-        copy_tree(images_dir, f"{export_dir}/{images_dir}")
 
+    # Save book locally
     save(interactive_book, output_file_path)
 
 
 if __name__ == "__main__":
-    EXPORT = True
     main()
