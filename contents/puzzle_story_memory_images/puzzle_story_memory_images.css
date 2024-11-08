@@ -20,13 +20,13 @@ h1 {
 
 .game-container {
     display: grid;
-    grid-template-columns: repeat(4, 200px);
+    grid-template-columns: repeat(4, 150px);
     grid-gap: 10px;
 }
 
 .card {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     background-color: #333;
     display: flex;
     justify-content: center;
