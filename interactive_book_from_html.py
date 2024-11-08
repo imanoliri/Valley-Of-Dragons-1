@@ -230,7 +230,7 @@ def main():
     html_file_path = "The_Valley_of_Dragons_1_-_Attack_of_the_Dark_God.html"
     contents_dir = "contents"
     title = html_file_path.split("/")[-1].split(".")[0]
-    output_file_path = "interactive_book.html"
+    output_file_path = "index.html"
 
     # Read html
     html_book = read_html_book(html_file_path)
