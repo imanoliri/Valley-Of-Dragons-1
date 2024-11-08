@@ -119,56 +119,22 @@ def get_content_links(base_path):
 def generate_contents_page(content_links):
     # HTML template for the contents page without template syntax
     html_template = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Contents</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                background-color: #f9f9f9;
-            }
-            h1 {
-                text-align: center;
-            }
-            .contents-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 10px;
-                margin-top: 20px;
-            }
-            .contents-grid button {
-                padding: 10px;
-                cursor: pointer;
-                background-color: #007BFF;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                text-align: center;
-                transition: background-color 0.3s;
-            }
-            .contents-grid button:hover {
-                background-color: #0056b3;
-            }
-        </style>
-    </head>
-    <body>
         <h1>Contents</h1>
         <div class="contents-grid">
-            <!-- Buttons will be inserted here -->
             {buttons}
         </div>
-    </body>
-    </html>
     """
 
+    def snake_to_camel_with_spaces(snake_str):
+        words = snake_str.split("_")
+        camel_case_str = " ".join(word.capitalize() for word in words)
+        return camel_case_str
+
     def get_name_from_file_path(fp):
-        return fp.split("/")[-1].split(".")[0].replace("_", " ")
+        return snake_to_camel_with_spaces(fp.split("/")[-1].split(".")[0])
 
     # Generate the button HTML
-    button_html = "\n".join(
+    button_html = "\n\t\t\t".join(
         f"<button onclick=\"window.location.href='{content}'\">{get_name_from_file_path(content)}</button>"
         for content in content_links
     )
