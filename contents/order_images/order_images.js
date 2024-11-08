@@ -46,7 +46,7 @@ const numImagesSelect = 6; // Number of images to display
 const containerSize = 0.9 * Math.min(window.innerWidth, window.innerHeight); // Size of the circular container (adaptative)
 const maxImageRadius = (containerSize * Math.sin(Math.PI / numImagesSelect)) / (1 + Math.sin(Math.PI / numImagesSelect)) / 2;
 const imageSize = 2 * maxImageRadius * 0.9; // Adjust image size
-const centerSize = (containerSize - 2 * imageSize) * 0.9;
+const centerSize = (containerSize - 2 * imageSize) * 0.85;
 const centerPosition = containerSize / 2;
 
 
