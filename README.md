@@ -5,4 +5,23 @@ Python script that takes an HTML book, divide it into chapters, and generate a s
 - Fully automatic from story:
     - Click images in order of the story.
     - Memory with images from the story.
+
+## Ideas
+- Standard, unrelated to story:
+    - Maze.
+    - Riddles.
+    - Codebreaking & cipher puzzles.
+    - Pattern recognition puzzles.
+    - Memory puzzles (lists/texts/numbers, hide and fill the gaps).
+
+- Semi-Automatic with AI:
+    - Click the difference.
+    - Coloring book.
+    - Shorter version
+    - Comic.
+    - Quiz from the story.
     
+- Manual, probably assisted with AI:
+    - Interactive maps with hover and click to go to other maps.
+    - Character sheets.
+    - Chat with characters.
