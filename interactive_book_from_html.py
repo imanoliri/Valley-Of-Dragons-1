@@ -46,9 +46,7 @@ def parse_html_book(html_content):
             if img_src != last_image:
                 if last_name != "img":
                     current_chapter.append("<br>")
-                current_chapter.append(
-                    f'<div class="image-wrapper">{str(element)}</div>'
-                )
+                current_chapter.append(str(element))
                 last_name = element.name
                 last_image = img_src
         else:
@@ -229,7 +227,7 @@ def save(data, output_file_path):
 def main():
 
     # Replace with your HTML file path
-    html_file_path = "book.html"
+    html_file_path = "The_Valley_of_Dragons_1_-_Attack_of_the_Dark_God.html"
     contents_dir = "contents"
     title = html_file_path.split("/")[-1].split(".")[0]
     output_file_path = "interactive_book.html"
