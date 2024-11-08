@@ -22,8 +22,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: var(--container-size);
-    height: var(--container-size);
+    width: min(80vw, var(--container-size)); /* Responsive width */
+    height: min(80vw, var(--container-size)); /* Responsive height */
+    max-width: var(--container-size); /* Ensure the maximum size limit */
+    max-height: var(--container-size); /* Ensure the maximum size limit */
+    aspect-ratio: 1 / 1; /* Maintains a square shape */
 }
 
 .center-text {
