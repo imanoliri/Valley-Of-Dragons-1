@@ -119,10 +119,10 @@ def get_content_links(base_path):
 def generate_contents_page(content_links):
     # HTML template for the contents page without template syntax
     html_template = """
-        <h1>Contents</h1>
-        <div class="contents-grid">
-            {buttons}
-        </div>
+                <h1>Contents</h1>
+                <div class="contents-grid">
+                    {buttons}
+                </div>
     """
 
     def snake_to_camel_with_spaces(snake_str):
@@ -134,7 +134,7 @@ def generate_contents_page(content_links):
         return snake_to_camel_with_spaces(fp.split("/")[-1].split(".")[0])
 
     # Generate the button HTML
-    button_html = "\n\t\t\t".join(
+    button_html = "\n\t\t\t\t".join(
         f"<button onclick=\"window.location.href='{content}'\">{get_name_from_file_path(content)}</button>"
         for content in content_links
     )
@@ -146,28 +146,28 @@ def generate_contents_page(content_links):
 def generate_static_html(chapters, tab_names, title):
     # Jinja2 template for the static HTML with tabs
     html_template = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{{ title }}</title>
-        <link rel="stylesheet" href="interactive_book.css">
-    </head>
-    <body>
-        <h1>{{ title }}</h1>
-        <div class="tab-buttons">
-            {% for i in range(chapters|length) %}
-                <button class="tab-button" onclick="showTab({{ i }})">{{ tab_names[i] }}</button>
-            {% endfor %}
-        </div>
-        <div class="tab-content">
-            {% for chapter in chapters %}
-                <div class="tab">{{ chapter|safe }}</div>
-            {% endfor %}
-        </div>
-        <script src="interactive_book.js"></script>
-    </body>
-    </html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="interactive_book.css">
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <div class="tab-buttons">
+        {% for i in range(chapters|length) %}
+            <button class="tab-button" onclick="showTab({{ i }})">{{ tab_names[i] }}</button>
+        {% endfor %}
+    </div>
+    <div class="tab-content">
+        {% for chapter in chapters %}
+            <div class="tab">{{ chapter|safe }}</div>
+        {% endfor %}
+    </div>
+    <script src="interactive_book.js"></script>
+</body>
+</html>
     """
 
     # Use Jinja2 to render the template with chapters, tab names, and title
