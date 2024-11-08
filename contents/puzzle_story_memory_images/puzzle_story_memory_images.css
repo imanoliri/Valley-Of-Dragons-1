@@ -11,23 +11,27 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
 }
 
 h1 {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .game-container {
     display: grid;
-    grid-template-columns: repeat(4, 150px);
-    grid-gap: 10px;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 800px; /* Limit the width of the game container */
 }
 
 .card {
-    width: 150px;
-    height: 150px;
     background-color: #333;
+    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,6 +42,7 @@ h1 {
     overflow: hidden;
     transform: perspective(600px) rotateY(0deg);
     transition: transform 0.4s;
+    aspect-ratio: 1 / 1; /* Maintain a square aspect ratio */
 }
 
 .card img {
