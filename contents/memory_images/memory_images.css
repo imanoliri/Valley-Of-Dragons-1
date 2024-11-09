@@ -21,6 +21,23 @@ h1 {
     text-align: center;
 }
 
+
+.slider-container {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+}
+
+.slider-container label {
+    margin-right: 10px;
+}
+
+#numImagesSlider {
+    width: 200px;
+}
+
+
 .game-container {
     display: grid;
     grid-template-columns: repeat(4, minmax(100px, 1fr));
@@ -65,3 +82,10 @@ h1 {
     background-color: #28a745;
     cursor: default;
 }
+
+
+
+button {
+    font-size: x-large
+}
+
