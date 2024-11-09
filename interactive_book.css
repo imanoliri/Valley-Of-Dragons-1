@@ -43,6 +43,7 @@ body::-webkit-scrollbar-thumb {
     border: none;
     border-radius: 5px; /* Rounded corners */
     background-color: #d1d8e0; /* Muted gray-blue */
+    font-size: large;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Smooth transition */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
@@ -73,6 +74,7 @@ body::-webkit-scrollbar-thumb {
     border-radius: 8px; /* Rounded corners */
     background-color: #a8c1db; /* Muted, desaturated light blue for a calmer appearance */
     color: #2a3f55; /* Darker, cool-toned text for contrast */
+    font-size: x-large;
     font-weight: bold; /* Emphasize the button labels */
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
