@@ -42,7 +42,21 @@ const imageSources = [
 const imagesWithIndices = imageSources.map((src, index) => ({ src, index }));
 
 
-const numImagesSelect = 6; // Number of images to display
+let numImagesSelect = 6; // Initial number of images to display
+
+const slider = document.getElementById('numImagesSlider');
+const numImagesLabel = document.getElementById('numImagesLabel');
+
+// Update the number of images based on the slider value
+slider.addEventListener('input', () => {
+    numImagesSelect = parseInt(slider.value, 10);
+    numImagesLabel.textContent = numImagesSelect;
+    createAndPositionImages(); // Recreate the images with the new number
+});
+
+
+
+
 const containerSize = 0.9 * Math.min(window.innerWidth, window.innerHeight); // Size of the circular container (adaptative)
 const maxImageRadius = (containerSize * Math.sin(Math.PI / numImagesSelect)) / (1 + Math.sin(Math.PI / numImagesSelect)) / 2;
 const imageSize = 2 * maxImageRadius * 0.9; // Adjust image size

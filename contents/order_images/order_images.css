@@ -8,10 +8,26 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f9;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+}
+
+.slider-container {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+}
+
+.slider-container label {
+    margin-right: 10px;
+}
+
+#numImagesSlider {
+    width: 200px;
 }
 
 .circle-container {
@@ -81,38 +97,36 @@ body {
 }
 
 .popup button {
-    display: flex; /* Use Flexbox */
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    padding: 10px 20px; /* Consistent padding */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s;
     flex: 1;
-    max-width: 48%; /* Ensure buttons have equal max-width */
-    height: 30px; /* Set a fixed height for consistency */
+    max-width: 48%;
+    height: 30px;
 }
 
-/* Button styles */
 .popup button[onclick*="resetPuzzle"] {
-    background-color: #FF0000; /* Red color */
+    background-color: #FF0000;
 }
 .popup button[onclick*="resetPuzzle"]:hover {
-    background-color: #CC0000; /* Darker red on hover */
+    background-color: #CC0000;
 }
 
 .popup button[onclick*="changePuzzle"] {
-    background-color: #008000; /* Green color */
+    background-color: #008000;
 }
 .popup button[onclick*="changePuzzle"]:hover {
-    background-color: #006400; /* Darker green on hover */
+    background-color: #006400;
 }
 
-/* Container for the buttons */
 .button-container {
     display: flex;
     justify-content: space-between;
-    gap: 10px; /* Add gap between buttons */
+    gap: 10px;
 }
