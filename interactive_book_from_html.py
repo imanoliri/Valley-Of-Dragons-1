@@ -1,10 +1,16 @@
 import json
-import shutil
 import os
+import re
+import string
+
 
 from bs4 import BeautifulSoup
-from distutils.dir_util import copy_tree
+from collections import Counter
 from jinja2 import Template
+from pathlib import Path
+from PIL import Image
+
+from interactive_book_words_to_ignore import function_words, particles_to_ignore
 
 
 # Read the HTML content
@@ -13,46 +19,50 @@ def read_html_book(html_file_path: str):
         return file.read()
 
 
-# Function to parse the HTML file and divide it into chapters
+def read_json(filepath):
+    with open(filepath, "r") as file:
+        return json.load(file)
+
+
 def parse_html_book(html_content):
 
-    # Use BeautifulSoup to parse the HTML
     soup = BeautifulSoup(html_content, "html.parser")
 
     chapters = []
     tab_names = []
     current_chapter = []
     default_intro_tab_name = "Intro"
-    last_text = None  # To keep track of the last text content
-    last_image = None  # To keep track of the last image content
+    last_text = None
+    last_image = None
     last_name = None
 
     for element in soup.find_all(["h1", "h2", "p", "div", "span", "img"]):
-        # Check if the element is a heading
+
         if element.name in ["h1", "h2"]:
             if current_chapter:
                 chapters.append(current_chapter)
                 if not tab_names:
                     tab_names.append(default_intro_tab_name)
             current_chapter = [str(element)]
-            tab_names.append(
-                element.get_text(strip=True)
-            )  # Use heading text as tab name
+            tab_names.append(element.get_text(strip=True))
             last_text = element.get_text(strip=True)  # Update last_text
             last_name = element.name
+
         elif element.name == "img":
-            # Check for image duplication
             img_src = element.get("src")
-            if img_src != last_image:
+            if img_src != last_image:  # Check for image duplication
                 if last_name != "img":
                     current_chapter.append("<br>")
-                current_chapter.append(str(element))
+                png_suffix = ".png"
+                str_element = str(element)
+                if img_src.endswith(png_suffix):
+                    str_element = str_element.replace(png_suffix, ".jpg")
+                current_chapter.append(str_element)
                 last_name = element.name
                 last_image = img_src
         else:
-            # Check for text duplication
             text_content = element.get_text(strip=True)
-            if text_content and text_content != last_text:
+            if text_content and text_content != last_text:  # Check for text duplication
                 if last_name == "img":
                     current_chapter.append("<br>")
                 current_chapter.append(str(element))
@@ -68,18 +78,12 @@ def parse_html_book(html_content):
 
 def extract_media(html_content):
 
-    # Parse the HTML content
     soup = BeautifulSoup(html_content, "html.parser")
 
-    # List to store media sources
     media_list = []
-
-    # Find all image, audio, and video tags in order of appearance
-    for element in soup.find_all(["img"]):  # , "audio", "video"]):
-        # Get the source attribute if it exists
+    for element in soup.find_all(["img", "audio", "video"]):
         src = element.get("src")
         if src:
-            # Append a dictionary with tag type and source to media_list
             media_list.append({"type": element.name, "src": src})
 
     return media_list
@@ -87,19 +91,100 @@ def extract_media(html_content):
 
 def extract_images(html_content):
 
-    # Parse the HTML content
     soup = BeautifulSoup(html_content, "html.parser")
 
-    # List to store image sources
     image_list = []
-
-    # Find all image tags in order of appearance
     for img in soup.find_all("img"):
         src = img.get("src")
         if src:
-            image_list.append(src)  # Add only the source of each image
-
+            suffix = ".png"
+            if src.endswith(suffix):
+                src = f"{src[:-len(suffix)]}.jpg"
+            image_list.append(src)
     return image_list
+
+
+def images_png_to_jpg(directory):
+    # Loop through all files in the given directory
+    for filename in os.listdir(directory):
+        if filename.lower().endswith(".png"):
+            # Construct the full file path
+            png_path = os.path.join(directory, filename)
+
+            # Open the .png image
+            with Image.open(png_path) as img:
+                # Create a white background image
+                white_background = Image.new("RGB", img.size, (255, 255, 255))
+
+                # Paste the .png image onto the white background, using the alpha channel as a mask
+                img = img.convert("RGBA")
+                white_background.paste(
+                    img, mask=img.split()[3]
+                )  # Use alpha channel as mask
+
+                # Create the new .jpg file name
+                jpg_filename = os.path.splitext(filename)[0] + ".jpg"
+                jpg_path = os.path.join(directory, jpg_filename)
+
+                # Save the image as .jpg
+                white_background.save(jpg_path, "JPEG")
+                os.remove(png_path)
+
+            print(f"Converted {filename} to {jpg_filename}")
+
+
+def extract_word_count(html_content):
+
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    text = ""  # Just aggregate all words in a single str, separated by a space
+    for paragraph in soup.find_all(["p", "h1", "h2"]):
+        text += paragraph.get_text() + " "
+    if soup.title:
+        text += soup.title.get_text() + " "
+
+    text = re.sub(r"[^\x00-\x7F]+", "", text)  # Remove non ASCII characters
+
+    for particle in particles_to_ignore:
+        text = text.replace(particle, "")
+
+    text = text.lower().translate(
+        str.maketrans("", "", string.punctuation)
+    )  # lowercase and remove punctuation sign
+    text = re.sub(
+        r"\b(\w+?)s\b(?=.*\b\1\b)", r"\1", text
+    )  # Use re.sub to replace the plural form with the singular form
+    text = re.sub(
+        r"\s+", " ", text
+    ).strip()  # Remove extra spaces left behind and return the cleaned string
+
+    return filter_and_sort_word_count(Counter(text.split()))
+
+
+def filter_and_sort_word_count(
+    word_count, min_word_count: int = 5, max_words: int = 60
+):
+    word_count = {
+        word: count
+        for word, count in word_count.items()
+        if word.lower() not in function_words
+    }
+
+    word_count = {
+        word: count for word, count in word_count.items() if count >= min_word_count
+    }
+
+    word_count = dict(list(word_count.items())[:max_words])
+
+    return dict(sorted(word_count.items(), key=lambda item: item[1], reverse=True))
+
+
+def extract_paragraph_texts(content):
+    return [
+        p.get_text()
+        for p in BeautifulSoup(content, "html.parser").find_all("p")
+        if p.get_text() != ""
+    ]
 
 
 def add_content_tab(chapters, tab_names, content_dir):
@@ -117,7 +202,6 @@ def get_content_links(base_path):
 
 
 def generate_contents_page(content_links):
-    # HTML template for the contents page without template syntax
     html_template = """
             <h1>Contents</h1>
             <div class="contents-grid">
@@ -133,18 +217,15 @@ def generate_contents_page(content_links):
     def get_name_from_file_path(fp):
         return snake_to_camel_with_spaces(fp.split("/")[-1].split(".")[0])
 
-    # Generate the button HTML
     button_html = "\n\t\t\t".join(
         f"<button onclick=\"window.location.href='{content}'\">{get_name_from_file_path(content)}</button>"
         for content in content_links
     )
 
-    # Inject the button HTML into the template
     return html_template.replace("{buttons}", button_html)
 
 
 def generate_static_html(chapters, tab_names, title):
-    # Jinja2 template for the static HTML with tabs
     html_template = """
 <!DOCTYPE html>
 <html>
@@ -170,31 +251,33 @@ def generate_static_html(chapters, tab_names, title):
 </html>
     """
 
-    # Use Jinja2 to render the template with chapters, tab names, and title
     template = Template(html_template)
     return template.render(
         chapters=chapters, tab_names=tab_names, title=title.replace("_", " ")
     )
 
 
-def save_to_json(data, output_file_path):
-    with open(output_file_path, "w", encoding="utf-8") as file:
+def save_to_json(data, filepath):
+    with open(filepath, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
 
 
-def save(data, output_file_path):
-
-    # Write the rendered HTML to the output file
-    with open(output_file_path, "w", encoding="utf-8") as file:
+def save_html(data, filepath):
+    with open(filepath, "w", encoding="utf-8") as file:
         file.write(data)
 
 
-# Main function to run the script
+def save_html_to_content(data, contents_dir, name):
+    filepath = f"{contents_dir}/{name}/{name}.html"
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    save_html(data, filepath)
+
+
 def main():
 
-    # Replace with your HTML file path
     html_file_path = "The_Valley_of_Dragons_1_-_Attack_of_the_Dark_God.html"
     contents_dir = "contents"
+    images_dir = "images"
     title = html_file_path.split("/")[-1].split(".")[0]
     output_file_path = "index.html"
 
@@ -202,6 +285,11 @@ def main():
     html_book = read_html_book(html_file_path)
     save_to_json(extract_media(html_book), "interactive_book_media.json")
     save_to_json(extract_images(html_book), "interactive_book_images.json")
+    images_png_to_jpg(images_dir)
+    save_to_json(extract_word_count(html_book), "interactive_book_word_count.json")
+    save_to_json(
+        extract_paragraph_texts(html_book), "interactive_book_parapragh_texts.json"
+    )
 
     # Generate html interactive book
     chapters, tab_names = parse_html_book(html_book)
@@ -209,7 +297,7 @@ def main():
     interactive_book = generate_static_html(chapters, tab_names, title)
 
     # Save book locally
-    save(interactive_book, output_file_path)
+    save_html(interactive_book, output_file_path)
 
 
 if __name__ == "__main__":
