@@ -42,10 +42,13 @@ const imageSources = [
 const imagesWithIndices = imageSources.map((src, index) => ({ src, index }));
 
 
-let numImagesSelect = 6; // Initial number of images to display
 
 const slider = document.getElementById('numImagesSlider');
 const numImagesLabel = document.getElementById('numImagesLabel');
+
+numImagesSelect = parseInt(slider.value, 10);
+numImagesLabel.textContent = numImagesSelect;// Initial number of images to display
+
 
 // Update the number of images based on the slider value
 slider.addEventListener('input', () => {
@@ -57,20 +60,6 @@ slider.addEventListener('input', () => {
 
 
 
-const containerSize = 0.9 * Math.min(window.innerWidth, window.innerHeight); // Size of the circular container (adaptative)
-const maxImageRadius = (containerSize * Math.sin(Math.PI / numImagesSelect)) / (1 + Math.sin(Math.PI / numImagesSelect)) / 2;
-const imageSize = 2 * maxImageRadius * 0.9; // Adjust image size
-const centerSize = (containerSize - 2 * imageSize) * 0.85;
-const centerPosition = containerSize / 2;
-
-
-// Set CSS variables
-document.documentElement.style.setProperty('--container-size', `${containerSize}px`);
-document.documentElement.style.setProperty('--image-size', `${imageSize}px`);
-document.documentElement.style.setProperty('--highlight-size', `${imageSize * 3 / 100}px`);
-document.documentElement.style.setProperty('--center-size', `${centerSize}px`);
-document.documentElement.style.setProperty('--center-position', `${centerPosition}px`);
-
 const circleContainer = document.getElementById('circle-container');
 const popupSolved = document.getElementById('popup-solved');
 const popupFailed = document.getElementById('popup-failed');
@@ -81,8 +70,34 @@ console.log(JSON.stringify(imageSources));
 let selectedImages; // Original set of selected images
 let imagesToSelect; // Images the user needs to select in order
 
+
+
+// Initialize the puzzle
+createAndPositionImages();
+
+
 // Function to create and position images in a circular pattern
 function createAndPositionImages() {
+
+    // CSS and sizes
+    let containerSize = 0.9 * Math.min(window.innerWidth, window.innerHeight); // Size of the circular container (adaptative)
+    let maxImageRadius = (containerSize * Math.sin(Math.PI / numImagesSelect)) / (1 + Math.sin(Math.PI / numImagesSelect)) / 2;
+    let imageSize = 2 * maxImageRadius * 0.9; // Adjust image size
+    let centerSize = (containerSize - 2 * imageSize) * 0.85;
+    let centerPosition = containerSize / 2;
+
+
+    // Set CSS variables
+    document.documentElement.style.setProperty('--container-size', `${containerSize}px`);
+    document.documentElement.style.setProperty('--image-size', `${imageSize}px`);
+    document.documentElement.style.setProperty('--highlight-size', `${imageSize * 3 / 100}px`);
+    document.documentElement.style.setProperty('--center-size', `${centerSize}px`);
+    document.documentElement.style.setProperty('--center-position', `${centerPosition}px`);
+
+    adjustFontSize()
+
+
+
     // Clear previous images
     const images = document.querySelectorAll('.circle-container .image');
     images.forEach(image => image.remove());
@@ -208,11 +223,3 @@ function adjustFontSize() {
         centerText.style.fontSize = `${fontSize}px`;
     }
 }
-
-// Call the function to adjust font size on load and on window resize
-window.addEventListener('load', adjustFontSize);
-window.addEventListener('resize', adjustFontSize);
-
-
-// Initialize the puzzle
-createAndPositionImages();

@@ -15,11 +15,16 @@ body {
     margin: 0;
 }
 
+
 .slider-container {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
     text-align: center;
+    align-items: center;
     font-size: 1rem;
     color: #333;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .slider-container label {

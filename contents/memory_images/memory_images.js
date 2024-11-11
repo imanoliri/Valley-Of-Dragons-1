@@ -42,13 +42,16 @@ const imageSources = [
 
 document.addEventListener('DOMContentLoaded', () => {
 
-let numImagesSelect = 6; // Initial number of images to display
 
 
 const slider = document.getElementById('slider');
 const numImagesLabel = document.getElementById('numImagesLabel');
 const decreaseButton = document.getElementById('decreaseButton');
 const increaseButton = document.getElementById('increaseButton');
+
+numImagesSelect = parseInt(slider.value, 10);
+numImagesLabel.textContent = numImagesSelect;// Initial number of images to display
+
 
 decreaseButton.addEventListener('click', () => {
     slider.value = parseInt(slider.value) - 1;
@@ -80,13 +83,11 @@ let flippedCards = [];
 let matchedPairs = 0;
 
 
+// Reset the game
+resetButton.addEventListener('click', initializeGame);
 
-
-    // Reset the game
-    resetButton.addEventListener('click', initializeGame);
-
-    // Start the game on load
-    initializeGame();
+// Start the game on load
+initializeGame();
 
 
 // Initialize the game
