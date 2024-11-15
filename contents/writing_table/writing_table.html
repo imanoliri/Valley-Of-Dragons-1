@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Table</title>
+    <link rel="stylesheet" href="writing_table.css">
+
+</head>
+<body>
+    <p>Drag-and-drop / click-and-click to form words. <br />Double-click a cell to clear its content or drag the trash bin to it.</p>
+    <button onclick="clearAllCells()">Clear All</button> <!-- Clear All Button -->
+
+    <div class="grid">
+        <!-- Vowels Row -->
+        <div class="delete-cell" draggable="true" ondragstart="drag(event)" title="Drag me to clear content">🗑️</div>
+        <div class="letter" draggable="true" ondragstart="drag(event)">A</div>
+        <div class="letter" draggable="true" ondragstart="drag(event)">E</div>
+        <div class="letter" draggable="true" ondragstart="drag(event)">I</div>
+        <div class="letter" draggable="true" ondragstart="drag(event)">O</div>
+        <div class="letter" draggable="true" ondragstart="drag(event)">U</div>
+        <div class="heading">Words</div>
+        
+
+        <!-- Consonants Rows -->
+        <div class="letter" draggable="true" ondragstart="drag(event)">B</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">C</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">D</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">F</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">G</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">H</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">J</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">K</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">L</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">M</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">N</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">P</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">Q</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">R</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">S</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">T</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">V</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">W</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">X</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">Y</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+
+        <div class="letter" draggable="true" ondragstart="drag(event)">Z</div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <input type="text" class="word-input" oninput="checkMatch(this)" placeholder="Type word">
+
+    </div>
+    <script src="writing_table.js"></script>
+</body>
+</html>
