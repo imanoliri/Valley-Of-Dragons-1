@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Set CSS variables
     const numberNodes = nodes.length;
-    const nodeSizePercentage = 100/Math.sqrt(numberNodes**2)
+    const nodeSizePercentage = 100/Math.sqrt(numberNodes**2);
     let nodeSize = vhToPixels(`${nodeSizePercentage}vh`);
     setCSSVariables(nodeSizePercentage)
 
@@ -123,6 +123,12 @@ function createMeleeNetwork() {
 
 function createArcherNetwork() {
     return [
+        [5, 6],
+        [6, 5], [6, 7],
+        [7, 6],
+        [8, 9],
+        [9, 8], [9, 10],
+        [10, 9],
         ...createPairs(10, [14]),
         ...createPairs(12, [13]),
         ...createPairs(11, [14]),
@@ -211,11 +217,14 @@ function drawNodes(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNet
         div.style.top = `${node.y * nodeSize}px`;
         div.dataset.nodeId = node.id; // Assign the node ID as a data attribute
 
-        // Add drag and drop event handlers for the nodes
+        // Drag and drop callbacks
         div.addEventListener("dragover", handleDragOver);
         div.addEventListener("drop", (event) => {handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
         div.addEventListener('mouseenter', (event) => {handleNodeHoverHighlightAccessibleUnitsNodes(event, units, meleeNetwork, archerNetwork, flierNetwork);});
         div.addEventListener('mouseleave', handleNodeLeaveHighlight);
+
+        // Click and click callbacks
+        div.addEventListener('click', (event) => {handleNodeClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
 
         battlefield.appendChild(div);
     });
@@ -260,12 +269,17 @@ function drawUnits(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNet
         circle.appendChild(tooltip);
         battlefield.appendChild(circle); // Append the unit circle to the battlefield
 
-        // Drag event handler
+        // Drag and drop callbacks
         circle.addEventListener('mouseenter', (event) => {handleNodeHoverHighlightAccessibleUnitsNodes(event, units, meleeNetwork, archerNetwork, flierNetwork);});
         circle.addEventListener('mouseleave', handleNodeLeaveHighlight);
         circle.addEventListener("dragstart", handleDragStart);
         circle.addEventListener("dragover", handleDragOver);
         circle.addEventListener("drop", (event) => {handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
+        
+
+        // Click and click callback
+        circle.addEventListener("click", (event) => {handleUnitClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
+
     });
 }
 
@@ -543,6 +557,95 @@ function networkContainsConnection(network, x, y) {
     return network.some(pair => pair[0] === x && pair[1] === y);
 }
 
+// CLICK AND CLICK callbacks
+let selectedUnitId = null; // Variable to store the ID of the selected unit
+
+// Function to handle click on a unit
+function handleUnitClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize) {
+    console.log(selectedUnitId)
+    // If a unit is already selected and the user clicks on another unit of the same team, swap positions
+    if (selectedUnitId) {
+        console.log(selectedUnitId)
+        const clickedUnitId = event.target.dataset.unitId;
+        const clickedUnit = units.find(unit => unit.id == clickedUnitId);
+        const selectedUnit = units.find(unit => unit.id == selectedUnitId);
+        console.log(clickedUnitId)
+
+        if (clickedUnit && selectedUnit) {
+            if (clickedUnit.team === selectedUnit.team) {
+                // Swap the nodes
+                const tempNode = selectedUnit.node;
+                selectedUnit.node = clickedUnit.node;
+                clickedUnit.node = tempNode;
+                writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                selectedUnitId = null; // Reset the selected unit
+                console.log('draw')
+                drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+                return;
+            } else {
+                // Different teams: initiate combat
+                units = handleCombat(selectedUnit, clickedUnit, selectedUnit.node, clickedUnit.node, units, meleeNetwork, archerNetwork, flierNetwork);
+                selectedUnitId = null; // Reset the selected unit
+                console.log('draw')
+                drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+                return;
+            }
+        }
+    }
+
+    // If no unit is selected, select this unit
+    selectedUnitId = event.target.dataset.unitId;
+    writeToLog(`\nSelected unit: ${selectedUnitId}`);
+}
+
+// Function to handle click on a node
+function handleNodeClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize) {
+    if (selectedUnitId) {
+        const targetNodeId = parseInt(event.target.dataset.nodeId);
+        const selectedUnit = units.find(unit => unit.id == selectedUnitId);
+
+        if (selectedUnit) {
+            // Check if there's another unit on the target node
+            const targetUnit = units.find(unit => unit.node === targetNodeId);
+
+            if (targetUnit) {
+                // If there's a unit on the target node, handle combat or swapping
+                if (targetUnit.team === selectedUnit.team) {
+                    // Friendly unit: swap nodes
+                    const tempNode = selectedUnit.node;
+                    selectedUnit.node = targetNodeId;
+                    targetUnit.node = tempNode;
+                    writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${targetUnit.id}`);
+                } else {
+                    // Enemy unit: initiate combat
+                    units = handleCombat(selectedUnit, targetUnit, selectedUnit.node, targetNodeId, units, meleeNetwork, archerNetwork, flierNetwork);
+                }
+            } else {
+                // No unit on the target node: move the selected unit
+                handleMoveDrag(selectedUnit, selectedUnit.node, targetNodeId, meleeNetwork, archerNetwork, flierNetwork);
+            }
+
+            selectedUnitId = null; // Reset the selected unit
+            console.log('draw')
+            drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+        }
+    }
+}
+
+// Add click event listeners to units and nodes
+function addClickEventListeners() {
+    const unitCircles = document.querySelectorAll(".unit-circle");
+    unitCircles.forEach(circle => {
+        circle.addEventListener("click", handleUnitClick);
+    });
+
+    const nodeElements = document.querySelectorAll(".node");
+    nodeElements.forEach(node => {
+        node.addEventListener("click", handleNodeClick);
+    });
+}
+
+
 
 // COMBAT logic
 function handleCombat(u, v, x, y, units, meleeNetwork, archerNetwork, flierNetwork) {
@@ -568,6 +671,7 @@ function handleCombat(u, v, x, y, units, meleeNetwork, archerNetwork, flierNetwo
         writeToLog(`\ncannot attack unit:${u.id} -> unit:${v.id}`)
     }
 
+    console.log('filter health units')
     return units.filter(u => u.health > 0)
 }
 
@@ -643,4 +747,73 @@ function handleArcherCombat(attacker, defender, x, y, units){
     }
     return units
 }
+
+
+// Instructions Modal
+document.getElementById("instructionsButton").addEventListener("click", function() {
+    const modal = document.getElementById("instructionsModal");
+    const instructionsText = document.getElementById("instructionsText");
+
+    instructionsText.innerHTML = `
+        Welcome to Battle! This is a tactics battlefield game where two or more teams clash in a turn-based battle until one side has no units left. Each team is controlled by one human player, in a shared PC or tablet like a tabletop game. The players can decide on a different victory condition and some maps propose ideas. Master your strategy, plan your moves, and outwit your opponent to emerge victorious!<br><br>
+
+        <strong>Objective</strong><br>
+        The aim of the game is to eliminate all enemy units and be the last team standing. Each unit has attributes that define its strength and behavior on the battlefield, including attack, defense, health, and type. Utilize each unit’s abilities wisely to gain the upper hand.<br><br>
+
+
+        <strong>Game Mechanics</strong><ul>
+        <li><strong>Define rules:</strong> Players should set some game rules beforehand: who starts playing first, how many units per turn can each team move, can the units move and shoot, can you use two actions in a single unit to move it two times, special victory conditions, etc
+        <li><strong>Select difficulty/deployment level:</strong>  Each level has usually various levels of difficulty. 1 will be easier for the green, 3 will be easier for the orange. This controls how many units are deployed for each team ("deployment level" in the table)
+        <li><strong>Taking Turns:</strong> Players alternate turns, moving the allow number of units as specified in the first point "Define rules" by drag and dropping them. Follow the drawn networks and the type of unit to know where to move, but if you hover your mouse, the nodes where your unit can move or attack will be highlighted as a hint.
+        <li><strong>Dragging and Dropping Units:</strong><ul>
+          <li>Drag a unit to a new node within its allowed network to reposition it.
+          <li>If a friendly unit occupies the target node, they swap places.
+          <li>If the target node has an enemy, combat occurs, according to the type of the attacking unit.<br><br>
+          </ul>
+        </ul>
+
+        <strong>Unit Attributes:</strong><ul>
+           <li><strong>Attack:</strong> How much damage (in health points) the unit inflicts when attacking.
+           <li><strong>Defense:</strong> How many damage points the unit can substract from incoming attacks.
+           <li><strong>Health:</strong> The unit's life points. If this reaches 0, the unit is defeated.
+           <li><strong>Type:</strong> Units can be of type "M" (Melee), "A" (Archer), or "F" (Flier), which determine their movement and attack capabilities.<br><br>
+        </ul>
+        <strong>Types of Units:</strong><ul>
+           <li><strong>Melee Units (M) (red ring and network):</strong> Move and attack using the Melee Network (solid red lines). If you drag a melee unit to an enemy, a fight to the death begins, with attacks alternating until one unit is defeated. The attacker strikes first, dealing damage as (attacker's attack - defender's defense), with a minimum of 1 damage. If the attacker wins, it takes the place of the defeated defender.
+           <li><strong>Archer Units (A) (green ring and network):</strong> Move using the Melee Network and attacks using both the Melee the Archer Network (dashed green lines). When dragged to an enemy, an archer performs a single shot, dealing damage (attacker's attack - defender's defense) once without receiving damage in return.
+           <li><strong>Flier Units (F) (blue ring and network):</strong> Move and attack using both the Melee and the Flier Network (fine curved blue lines). Fliers can move more freely across the battlefield.<br><br>
+        </ul>
+
+
+        <strong>Strategies</strong><br>
+        Use melee units to engage directly and be aggresive, archers for ranged attacks to whittle the enemy down without taking damage, and fliers for superior mobility. Plan carefully and outmaneuver your opponent to win!
+    `;
+    modal.style.display = "flex";
+});
+
+document.getElementById("closeInstructionsModal").addEventListener("click", function() {
+    document.getElementById("instructionsModal").style.display = "none";
+});
+
+// Map Info Modal
+document.getElementById("mapInfoButton").addEventListener("click", function() {
+    const modal = document.getElementById("mapInfoModal");
+    const mapInfoText = document.getElementById("mapInfoText");
+
+    mapInfoText.innerHTML = `
+        Welcome to Durin's Chasm! Deep of the mountain, the dwarves mine in search of the gold, gems and stone, but they discover a nest of goblins and retreat to the fort at Durin's Chasm to defend from the invasion.<br><br>
+        
+        The goblins will try to cross the chasm using the three bridges in beige. The mountain dwarves and an ally dragon rider (green team) must work together to repell the attack of the goblin invaders (orange).<br><br>
+
+        Optional victory condition: don't let a goblin unit stay more than two consecutive turns on any of the towers.<br><br>
+
+        Hardcore victory condition: don't let a goblin unit step at the other side of the bridges.
+    `;
+    modal.style.display = "flex";
+});
+
+document.getElementById("closeMapInfoModal").addEventListener("click", function() {
+    document.getElementById("mapInfoModal").style.display = "none";
+});
+
 
