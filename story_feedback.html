@@ -1,0 +1,192 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Story Feedback</title>
+        
+    <style>
+        /* General page styling */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #4a4a4a;
+            margin: 20px;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #6a89cc;
+        }
+
+        table {
+            width: 100%;
+            max-width: 90vw;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid white;
+        }
+
+        th {
+            background-color: #6a89cc;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        td[contenteditable="true"] {
+            background-color: #f3f7fa;
+            outline: none;
+            border: 1px solid white;
+            transition: border-color 0.3s;
+        }
+
+        td[contenteditable="true"]:focus {
+            border-color: #6a89cc;
+            background-color: #e9f4fe;
+        }
+
+        .chapter-title {
+            font-weight: bold;
+            color: #4a4a4a;
+            background-color: #f1f1f1;
+        }
+
+        .feedbackButton {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 24px;
+            font-size: 16px;
+            color: white;
+            background-color: #6a89cc;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feedbackButton:hover {
+            background-color: #357ABD;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106, 137, 204, 0.3);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    
+    </head>
+    <body>
+        <h2>Story Feedback</h2>
+        <h3>Ratings (1-10)</h3>
+        <table id="ratingsTable" border="1">
+            <tr><th>Chapter</th><th>Overall</th><th>World-Building</th><th>Plot</th><th>Pacing</th><th>Dialogue</th><th>Character Development</th><th>Conflict/Tension</th><th>Themes</th><th>Emotional Impact</th></tr>
+            <tr><td class='chapter-title'>Whole Story</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 1: Valley of Dragons</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 2: Attack of the Dark God</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 3: Alaric</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 4: The Decision</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 5: River City</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 6: Forest City</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 7: Battle of Greystone Pass</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 8: Champion</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 9: Paladin</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 10: Evil’s Lair</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr>
+        </table>
+        <h3>Comments</h3>
+        <table id="commentsTable" border="1">
+            <tr><th>Chapter</th><th>Overall</th><th>World-Building</th><th>Plot</th><th>Pacing</th><th>Dialogue</th><th>Character Development</th><th>Conflict/Tension</th><th>Themes</th><th>Emotional Impact</th></tr>
+            <tr><td class='chapter-title'>Whole Story</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 1: Valley of Dragons</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 2: Attack of the Dark God</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 3: Alaric</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 4: The Decision</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 5: River City</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 6: Forest City</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 7: Battle of Greystone Pass</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 8: Champion</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 9: Paladin</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr><tr><td class='chapter-title'>Chapter 10: Evil’s Lair</td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td><td contenteditable='true'></td></tr>
+        </table>
+        <button class="feedbackButton" onclick="finalizeFeedback()">Send Feedback</button>
+        
+    <script>
+        let userName
+
+        function finalizeFeedback() {
+            const aspects = ["Overall", "World-Building", "Plot", "Pacing", "Dialogue", "Character Development", "Conflict/Tension", "Themes", "Emotional Impact"];
+            const chapterTitles = ['Whole Story', 'Chapter 1: Valley of Dragons', 'Chapter 2: Attack of the Dark God', 'Chapter 3: Alaric', 'Chapter 4: The Decision', 'Chapter 5: River City', 'Chapter 6: Forest City', 'Chapter 7: Battle of Greystone Pass', 'Chapter 8: Champion', 'Chapter 9: Paladin', 'Chapter 10: Evil’s Lair'];
+            let feedbackData = [];
+
+            // Collect data from both tables
+            chapterTitles.forEach((chapter, index) => {
+                let chapterFeedback = { chapter: chapter, ratings: {}, comments: {} };
+
+                // Collect ratings
+                const ratingCells = document.querySelectorAll("#ratingsTable tr")[index + 1].querySelectorAll("td[contenteditable='true']");
+                ratingCells.forEach((cell, i) => {
+                    const value = parseInt(cell.innerText.trim(), 10);
+                    chapterFeedback.ratings[aspects[i]] = isNaN(value) ? null : value;
+                });
+
+                // Collect comments
+                const commentCells = document.querySelectorAll("#commentsTable tr")[index + 1].querySelectorAll("td[contenteditable='true']");
+                commentCells.forEach((cell, i) => {
+                    chapterFeedback.comments[aspects[i]] = cell.innerText.trim() || null;
+                });
+                
+                if (chapterFeedbackIsEmpty(chapterFeedback) !== true) {
+                    feedbackData.push(chapterFeedback);
+                }
+            });
+
+            // Add metadata
+            if (!userName) {
+                userName = prompt("Please enter your name (or leave blank for anonymous):") || "Anonymous";
+            }
+            const storyId = 1;
+            const currentDate = new Date().toISOString();
+
+            feedbackData = feedbackData.map(feedback => ({
+                userName: userName,
+                storyID: storyId,
+                date: currentDate,
+                ...feedback
+            }));
+
+            console.log(feedbackData)
+
+            // Send feedback to the Netlify serverless function
+            fetch('/.netlify/functions/logFeedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(feedbackData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Feedback sent successfully!");
+                } else {
+                    alert("Failed to send feedback. Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        }
+
+        function chapterFeedbackIsEmpty(chapterFeedback) {
+            const allRatingsAreEmpty = Object.values(chapterFeedback.ratings).every(value => value === null);
+            const allCommentsAreEmpty = Object.values(chapterFeedback.comments).every(value => value === null || value.trim() === "");
+            return allRatingsAreEmpty && allCommentsAreEmpty;
+        }
+
+    </script>
+    
+    </body>
+    </html>
+    
