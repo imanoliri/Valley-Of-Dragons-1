@@ -74,6 +74,16 @@ function cleanWord(word) {
 }
 
 
+let speakLettersWhenDropped = true;
+let speakWhenCorrectSolution = true;
+document.getElementById("checkSpeakLettersWhenDropped").checked = speakLettersWhenDropped;
+document.getElementById("checkSpeakWordsWhenCorrect").checked = speakWhenCorrectSolution;
+
+function refreshChecboxes() {
+    speakLettersWhenDropped = document.getElementById("checkSpeakLettersWhenDropped").checked;
+    speakWhenCorrectSolution = document.getElementById("checkSpeakWordsWhenCorrect").checked;
+}
+
 
 numberOfColumns = 7
 const words = getWordsForGrid(Object.keys(wordCounts).map(cleanWord), numberOfColumns);
@@ -95,6 +105,9 @@ function drag(ev) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
+    if (speakLettersWhenDropped) {
+        speak(data)
+    }
 
     if (data === "") {
         ev.target.innerHTML = ""; // Clear the content
@@ -251,6 +264,10 @@ function checkMatch(input) {
     // Check if the constructed word matches the input value
     if (constructedWord === input.value) {
         input.style.backgroundColor = "lightgreen"; // Light up the input if it matches
+        if (speakWhenCorrectSolution) {
+            speak(constructedWord)
+        }
+
     } else {
         input.style.backgroundColor = ""; // Remove background color if it doesn't match
     }
@@ -267,8 +284,12 @@ function fillTextBoxes() {
 
     // Fill the text boxes with the selected words
     shuffledWords.forEach((word, index) => {
-        textInputs[index].value = word;
+        textInputs[index].value = word.toUpperCase();
     });
+}
+function speak(text, lang = 'english') {
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
 }
 
 
