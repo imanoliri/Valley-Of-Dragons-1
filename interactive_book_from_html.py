@@ -36,7 +36,7 @@ def parse_html_book(html_content):
     last_image = None
     last_name = None
 
-    for element in soup.find_all(["h1", "h2", "p", "div", "span", "img"]):
+    for element in soup.find_all(["h1", "h2", "img", "p", "ol"]):
 
         if element.name in ["h1", "h2"]:
             if current_chapter:
