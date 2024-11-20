@@ -13,20 +13,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
     margin-bottom: 20px;
 }
 
-button {
-    font-size: 0.9em;
-    padding: 5px 10px;
-    cursor: pointer;
-}
 #controls label {
     margin-right: 10px;
     font-size: 1em;
 }
-
 
 #controls input[type="range"] {
     margin-right: 10px;
@@ -42,7 +35,7 @@ button {
     position: relative;
     width: 100vh;
     height: 100vh;
-    background: url('battle_game__durins_chasm.png') no-repeat center center;
+    background: url('battle_2__greystone_pass_1.png') no-repeat center center;
     background-size: cover;
     border: 1px solid #ccc;
 }
@@ -178,44 +171,3 @@ th {
     padding: 10px;
     background-color: #f9f9f9;
 }
-
-
-/* Modal Styles */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
-    justify-content: center;
-    align-items: center;
-    z-index: 15;
-}
-
-.modal-content {
-    background-color: white;
-    width: 50vw; /* 50% of the viewport width */
-    max-width: 800px; /* Maximum width for larger screens */
-    max-height: 80vh; /* Maximum height to fit within the viewport */
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 1.2em; /* Bigger font size */
-    text-align: left;
-    line-height: 1.6; /* Improve readability */
-    overflow-y: auto; /* Add vertical scrollbar */
-}
-
-.modal-content h2 {
-    margin-top: 0;
-}
-
-#closeModal {
-    display: block;
-    margin: 20px auto 0; /* Center the button */
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-}
-

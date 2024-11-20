@@ -87,12 +87,12 @@ function createUnits(deploymentLevel) {
         { id: 8, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 8, deployment: 2 },
         { id: 9, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 9, deployment: 2 },
         { id: 10, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 10, deployment: 2 },
-        { id: 11, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 6, node: 11, deployment: 1 },
+        { id: 11, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 5, node: 11, deployment: 1 },
         { id: 12, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 12, deployment: 2 },
-        { id: 13, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 6, node: 13, deployment: 1 },
-        { id: 14, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 6, node: 14, deployment: 2 },
-        { id: 15, team: 1, name: "Dwarf Archer", type: "A", attack: 2, defense: 0, health: 6, node: 15, deployment: 1 },
-        { id: 16, team: 1, name: "Dwarf Archer", type: "A", attack: 2, defense: 0, health: 6, node: 16, deployment: 1 },
+        { id: 13, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 5, node: 13, deployment: 1 },
+        { id: 14, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 5, node: 14, deployment: 2 },
+        { id: 15, team: 1, name: "Dwarf Archer", type: "A", attack: 2, defense: 0, health: 5, node: 15, deployment: 1 },
+        { id: 16, team: 1, name: "Dwarf Archer", type: "A", attack: 2, defense: 0, health: 5, node: 16, deployment: 1 },
         { id: 17, team: 1, name: "Dragon Rider", type: "F", attack: 3, defense: 2, health: dragonRiderHealth, node: 17, deployment: 1 }
     ]
     units = units.filter(unit => unit.deployment <= deploymentLevel);
@@ -755,7 +755,7 @@ document.getElementById("instructionsButton").addEventListener("click", function
     const instructionsText = document.getElementById("instructionsText");
 
     instructionsText.innerHTML = `
-        Welcome to Battle! This is a tactics battlefield game where two or more teams clash in a turn-based battle until one side has no units left. Each team is controlled by one human player, in a shared PC or tablet like a tabletop game. The players can decide on a different victory condition and some maps propose ideas. Master your strategy, plan your moves, and outwit your opponent to emerge victorious!<br><br>
+        Welcome to Battle! This is a tactics battlefield game where two or more teams clash in a turn-based battle until one side has no units left. Each team is controlled by one human player, in a shared PC or tablet, just like a tabletop game. The players can decide on a different victory condition and some maps propose ideas. Master your strategy, plan your moves, and outwit your opponent to emerge victorious!<br><br>
 
         <strong>Objective</strong><br>
         The aim of the game is to eliminate all enemy units and be the last team standing. Each unit has attributes that define its strength and behavior on the battlefield, including attack, defense, health, and type. Utilize each unit’s abilities wisely to gain the upper hand.<br><br>
@@ -764,11 +764,12 @@ document.getElementById("instructionsButton").addEventListener("click", function
         <strong>Game Mechanics</strong><ul>
         <li><strong>Define rules:</strong> Players should set some game rules beforehand: who starts playing first, how many units per turn can each team move, can the units move and shoot, can you use two actions in a single unit to move it two times, special victory conditions, etc
         <li><strong>Select difficulty/deployment level:</strong>  Each level has usually various levels of difficulty. 1 will be easier for the green, 3 will be easier for the orange. This controls how many units are deployed for each team ("deployment level" in the table)
-        <li><strong>Taking Turns:</strong> Players alternate turns, moving the allow number of units as specified in the first point "Define rules" by drag and dropping them. Follow the drawn networks and the type of unit to know where to move, but if you hover your mouse, the nodes where your unit can move or attack will be highlighted as a hint.
+        <li><strong>Taking Turns:</strong> Players alternate turns, moving the allow number of units as specified in the first point "Define rules" by drag and dropping them. Notice the drawn networks and the type of unit to know where to move, but if you hover your mouse, the nodes where your unit can move or attack will be highlighted as a hint.
         <li><strong>Dragging and Dropping Units:</strong><ul>
-          <li>Drag a unit to a new node within its allowed network to reposition it.
+          <li>Drag a unit to a valid new node to reposition it.
+          <li>If the target node is empty, your unit moves to occupy it.
           <li>If a friendly unit occupies the target node, they swap places.
-          <li>If the target node has an enemy, combat occurs, according to the type of the attacking unit.<br><br>
+          <li>If the target node has an enemy, combat occurs according to the type of the attacking unit.<br><br>
           </ul>
         </ul>
 
@@ -780,8 +781,8 @@ document.getElementById("instructionsButton").addEventListener("click", function
         </ul>
         <strong>Types of Units:</strong><ul>
            <li><strong>Melee Units (M) (red ring and network):</strong> Move and attack using the Melee Network (solid red lines). If you drag a melee unit to an enemy, a fight to the death begins, with attacks alternating until one unit is defeated. The attacker strikes first, dealing damage as (attacker's attack - defender's defense), with a minimum of 1 damage. If the attacker wins, it takes the place of the defeated defender.
-           <li><strong>Archer Units (A) (green ring and network):</strong> Move using the Melee Network and attacks using both the Melee the Archer Network (dashed green lines). When dragged to an enemy, an archer performs a single shot, dealing damage (attacker's attack - defender's defense) once without receiving damage in return.
-           <li><strong>Flier Units (F) (blue ring and network):</strong> Move and attack using both the Melee and the Flier Network (fine curved blue lines). Fliers can move more freely across the battlefield.<br><br>
+           <li><strong>Archer Units (A) (green ring and network):</strong> Move using the Melee Network and attacks using both the Melee the Archer Network (dashed green lines). When dragged to an enemy, an archer performs a single shot, dealing damage once with the previous formula without receiving damage in return.
+           <li><strong>Flier Units (F) (blue ring and network):</strong> Move and attack like melee units but can use both the Melee and the Flier Network (fine curved blue lines). Fliers can move more freely across the battlefield.<br><br>
         </ul>
 
 
@@ -801,7 +802,7 @@ document.getElementById("mapInfoButton").addEventListener("click", function() {
     const mapInfoText = document.getElementById("mapInfoText");
 
     mapInfoText.innerHTML = `
-        Welcome to Durin's Chasm! Deep of the mountain, the dwarves mine in search of the gold, gems and stone, but they discover a nest of goblins and retreat to the fort at Durin's Chasm to defend from the invasion.<br><br>
+        Welcome to Durin's Chasm! Deep of the mountain, the dwarves mine in search of the gold, gems and stone. Unfortunately, they discover a nest of goblins and retreat to the fort at Durin's Chasm to defend from the invasion.<br><br>
         
         The goblins will try to cross the chasm using the three bridges in beige. The mountain dwarves and an ally dragon rider (green team) must work together to repell the attack of the goblin invaders (orange).<br><br>
 
