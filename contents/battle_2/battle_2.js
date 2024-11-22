@@ -165,11 +165,9 @@ function setCSSVariables(nodeSizePercentage) {
 // DRAW functions
 function drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize){
     
-    // Set the focal point to the center of the page
-    let maxNodesX = Math.max(...nodes.map(node => node.x)) * nodeSize;
-    let maxNodesY = Math.max(...nodes.map(node => node.y)) * nodeSize;
-    const focalPointX = maxNodesX / 2;
-    const focalPointY = maxNodesY / 2;
+    drawNodes(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNetwork)
+    drawMobileElements(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize)
+
 
     // Create SVG element for lines
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -180,11 +178,21 @@ function drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSi
     svg.style.left = "0";
     battlefield.appendChild(svg);
 
+
+    // Set the focal point to the center of the page
+    let maxNodesX = Math.max(...nodes.map(node => node.x)) * nodeSize;
+    let maxNodesY = Math.max(...nodes.map(node => node.y)) * nodeSize;
+    const focalPointX = maxNodesX / 2;
+    const focalPointY = maxNodesY / 2;
+
     createConnections(svg, nodes, nodeSize, meleeNetwork, "red", nodeSize/10, "", 0, false);
     createConnections(svg, nodes, nodeSize, archerNetwork, "green", nodeSize/10, "10,10", 0, false);
     createConnections(svg, nodes, nodeSize, flierNetwork, "blue", nodeSize/300, "", 0, true, focalPointX, focalPointY, 150);
 
-    drawNodes(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNetwork);
+}
+
+function drawMobileElements(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize){
+
     drawUnits(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNetwork);
     drawUnitsTable(units);
     updateHealthBar(units);
@@ -526,7 +534,7 @@ function handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwo
             }
 
             // Redraw the units to update their positions         
-            drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+            drawMobileElements(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
         }
     }
 }
@@ -589,7 +597,7 @@ function handleUnitClick(event, nodes, units, meleeNetwork, archerNetwork, flier
         writeToLog(`\nSelected unit: ${selectedUnitId}`);
     }
 
-    drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+    drawMobileElements(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
 }
 
 // Function to handle click on a node
@@ -807,7 +815,7 @@ document.getElementById("mapInfoButton").addEventListener("click", function() {
 
         Optional victory condition: don't let more than 3 units (apart from the Lich King) reach the south end of the map.<br><br>
 
-        Hardcore victory condition: don't let any unit other than the Lich King reac the south end of the map.
+        Hardcore victory condition: don't let any unit other than the Lich King reach the south end of the map.
     `;
     modal.style.display = "flex";
 });
