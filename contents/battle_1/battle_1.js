@@ -1,5 +1,59 @@
+async function fetchBattleData() {
+    try {
+        
+        const response_nodes = await fetch('nodes.json');
+        if (!response_nodes.ok) {
+            throw new Error(`HTTP error! status: ${response_nodes.status}`);
+        }
+        const response_units = await fetch('units.json');
+        if (!response_units.ok) {
+            throw new Error(`HTTP error! status: ${response_units.status}`);
+        }
+        const response_meleeNetwork = await fetch('melee_interactions.json');
+        if (!response_meleeNetwork.ok) {
+            throw new Error(`HTTP error! status: ${response_meleeNetwork.status}`);
+        }
+        const response_archerNetwork = await fetch('archer_interactions.json');
+        if (!response_archerNetwork.ok) {
+            throw new Error(`HTTP error! status: ${response_archerNetwork.status}`);
+        }
+        const response_flierNetwork = await fetch('flier_interactions.json');
+        if (!response_flierNetwork.ok) {
+            throw new Error(`HTTP error! status: ${response_flierNetwork.status}`);
+        }
 
-document.addEventListener("DOMContentLoaded", function () {
+
+
+        nodes = await response_nodes.json();
+        console.log("Nodes fetched:", nodes);
+        units = await response_units.json();
+        console.log("Units fetched:", units);
+
+        meleeNetwork = await response_meleeNetwork.json();
+        console.log("meleeNetwork fetched:", meleeNetwork);
+        archerNetwork = await response_archerNetwork.json();
+        console.log("archerNetwork fetched:", archerNetwork);
+        flierNetwork = await response_flierNetwork.json();
+        console.log("flierNetwork fetched:", flierNetwork);
+
+    } catch (error) {
+        console.error('Error fetching JSON:', error);
+    }
+}
+
+let deploymentLevel
+let nodes
+let units
+
+let meleeNetwork
+let archerNetwork
+let flierNetwork
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchBattleData().then(createBattle);
+});
+    
+function createBattle() {
 
     // Get HTML elements
     const battlefield = document.getElementById("battlefield");
@@ -17,20 +71,18 @@ document.addEventListener("DOMContentLoaded", function () {
     setDifficultyButton.addEventListener("click", function() {
         location.reload();
     });
-
-
     
 
     // Nodes & units
-    let deploymentLevel = parseInt(slider.value, 10);
-    let nodes = createNodes();
-    let units = createUnits(deploymentLevel);
+    deploymentLevel = parseInt(slider.value, 10);
+    nodes = createNodes(nodes);
+    units = createUnits(units, deploymentLevel);
 
     
     // Networks
-    let meleeNetwork = createMeleeNetwork();
-    let archerNetwork = createArcherNetwork();
-    let flierNetwork = createFlierNetwork();
+    meleeNetwork = createMeleeNetwork(meleeNetwork);
+    archerNetwork = createArcherNetwork(archerNetwork);
+    flierNetwork = createFlierNetwork(flierNetwork);
 
     
     // Set CSS variables
@@ -39,31 +91,13 @@ document.addEventListener("DOMContentLoaded", function () {
     let nodeSize = vhToPixels(`${nodeSizePercentage}vh`);
     setCSSVariables(nodeSizePercentage)
 
-function setCSSVariables(nodeSizePercentage) {
-    document.documentElement.style.setProperty('--node-size', `${nodeSizePercentage}vh`);
-    document.documentElement.style.setProperty('--unit-size', `${nodeSizePercentage}vh`);
-    document.documentElement.style.setProperty('--node-size-highlight', `${nodeSizePercentage*1.2}vh`);
-    document.documentElement.style.setProperty('--unit-size-highlight', `${nodeSizePercentage*1.2}vh`);
-}
-
     drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize)
-});
+}
 
 
 // CREATE functions
-function createNodes() {
-    let nodes = [
-        { id: 1, x: 1, y: 14 }, { id: 2, x: 3, y: 14 },
-        { id: 3, x: 9, y: 14 }, { id: 4, x: 12, y: 14 },
-        { id: 5, x: 2, y: 12 }, { id: 6, x: 7, y: 12 },
-        { id: 7, x: 11, y: 12 }, { id: 8, x: 3, y: 8 },
-        { id: 9, x: 7, y: 8 }, { id: 10, x: 12, y: 8 },
-        { id: 11, x: 5, y: 5 }, { id: 12, x: 9, y: 6 },
-        { id: 13, x: 13, y: 5.5 }, { id: 14, x: 11.5, y: 4.5 },
-        { id: 15, x: 15, y: 4 }, { id: 16, x: 13, y: 2 },
-        { id: 17, x: 16, y: 1 }
-    ]
-    return invertYScale(nodes)
+function createNodes(nodes) {
+    return invertYScale(nodes) 
 }
 
 function invertYScale(nodes) {
@@ -74,83 +108,22 @@ function invertYScale(nodes) {
     }));
 }
 
-function createUnits(deploymentLevel) {
-    const dragonRiderHealth = 12 - 2 * Math.max((deploymentLevel - 2), 0);
-    let units =  [
-        { id: 1, team: 2, name: "Goblin Archer", type: "A", attack: 2, defense: 0, health: 4, node: 1, deployment: 1 },
-        { id: 2, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 2, deployment: 1 },
-        { id: 3, team: 2, name: "Goblin Archer", type: "A", attack: 2, defense: 0, health: 4, node: 3, deployment: 1 },
-        { id: 4, team: 2, name: "Goblin Archer", type: "A", attack: 2, defense: 0, health: 4, node: 4, deployment: 1 },
-        { id: 5, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 5, deployment: 1 },
-        { id: 6, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 6, deployment: 1 },
-        { id: 7, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 7, deployment: 1 },
-        { id: 8, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 8, deployment: 2 },
-        { id: 9, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 9, deployment: 2 },
-        { id: 10, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 10, deployment: 2 },
-        { id: 11, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 5, node: 11, deployment: 1 },
-        { id: 12, team: 2, name: "Goblin Warrior", type: "M", attack: 2, defense: 1, health: 4, node: 12, deployment: 2 },
-        { id: 13, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 5, node: 13, deployment: 1 },
-        { id: 14, team: 1, name: "Dwarf Warrior", type: "M", attack: 2, defense: 1, health: 5, node: 14, deployment: 2 },
-        { id: 15, team: 1, name: "Dwarf Archer", type: "A", attack: 2, defense: 0, health: 5, node: 15, deployment: 1 },
-        { id: 16, team: 1, name: "Dwarf Archer", type: "A", attack: 2, defense: 0, health: 5, node: 16, deployment: 1 },
-        { id: 17, team: 1, name: "Dragon Rider", type: "F", attack: 3, defense: 2, health: dragonRiderHealth, node: 17, deployment: 1 }
-    ]
-    units = units.filter(unit => unit.deployment <= deploymentLevel);
+function createUnits(units) {
+    units = units.filter(unit => (unit.min_deployment <= deploymentLevel) & (deploymentLevel <=  unit.max_deployment));
     return units
 }
 
-function createMeleeNetwork() {
-    return [
-        ...createPairs(1, [5, 2]),
-        ...createPairs(2, [1, 5, 6, 3]),
-        ...createPairs(3, [2, 6, 7, 4]),
-        ...createPairs(4, [3, 7]),
-        ...createPairs(5, [1, 2, 8]),
-        ...createPairs(6, [2, 3, 9]),
-        ...createPairs(7, [3, 4, 10]),
-        ...createPairs(8, [5, 11, 9]),
-        ...createPairs(9, [6, 8, 11, 12]),
-        ...createPairs(10, [7, 12, 13]),
-        ...createPairs(11, [8, 9, 12]),
-        ...createPairs(12, [11, 9, 10, 13, 14]),
-        ...createPairs(13, [10, 12, 14, 15]),
-        ...createPairs(14, [12, 13, 16]),
-        ...createPairs(15, [14, 13, 16, 17]),
-        ...createPairs(16, [14, 13, 15, 17]),
-        ...createPairs(17, [15, 16])
-    ]
+function createMeleeNetwork(meleeNetwork) {
+    return meleeNetwork
 }
 
-function createArcherNetwork() {
-    return [
-        [5, 6],
-        [6, 5], [6, 7],
-        [7, 6],
-        [8, 9],
-        [9, 8], [9, 10],
-        [10, 9],
-        ...createPairs(10, [14]),
-        ...createPairs(12, [13]),
-        ...createPairs(11, [14]),
-        ...createPairs(14, [10, 15]),
-        ...createPairs(13, [11, 12]),
-        ...createPairs(15, [12, 10]),
-        ...createPairs(16, [12, 10, 13])
-    ]
+function createArcherNetwork(archerNetwork) {
+    return archerNetwork
+
 }
 
-function createFlierNetwork() {
-    return [
-        ...createPairs(1, [3, 4, 11, 12, 13, 14, 17]),
-        ...createPairs(2, [4, 11, 12, 13, 14, 17]),
-        ...createPairs(3, [1, 11, 12, 13, 14, 17]),
-        ...createPairs(4, [1, 2, 11, 12, 13, 14, 17]),
-        ...createPairs(11, [1, 2, 3, 4, 13, 14, 17]),
-        ...createPairs(12, [1, 2, 3, 4, 17]),
-        ...createPairs(13, [1, 2, 3, 4, 11, 17]),
-        ...createPairs(14, [1, 2, 3, 4, 11, 17]),
-        ...createPairs(17, [1, 2, 3, 4, 11, 12, 13, 14])
-    ]
+function createFlierNetwork(flierNetwork) {
+    return flierNetwork
 }
 
 function createPairs(element, list) {
@@ -179,6 +152,15 @@ function vhToPixels(value) {
     const pixels = (window.innerHeight * numericValue) / 100;
     return pixels;
 }
+
+
+function setCSSVariables(nodeSizePercentage) {
+    document.documentElement.style.setProperty('--node-size', `${nodeSizePercentage}vh`);
+    document.documentElement.style.setProperty('--unit-size', `${nodeSizePercentage}vh`);
+    document.documentElement.style.setProperty('--node-size-highlight', `${nodeSizePercentage*1.2}vh`);
+    document.documentElement.style.setProperty('--unit-size-highlight', `${nodeSizePercentage*1.2}vh`);
+}
+
 
 // DRAW functions
 function drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize){
@@ -524,7 +506,19 @@ function handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwo
             const targetUnit = units.find(unit => unit.node === targetNodeIdInt); 
 
             if (targetUnit) {
-                units = handleCombat(draggedUnit, targetUnit, draggedUnitNodeIdInt, targetNodeIdInt, units, meleeNetwork, archerNetwork, flierNetwork)
+                if (draggedUnit.team === targetUnit.team) {
+                    // Swap the nodes
+                    if (networkContainsConnection(meleeNetwork, draggedUnit.node, targetUnit.node) & networkContainsConnection(meleeNetwork, targetUnit.node, draggedUnit.node)){
+                        const tempNode = draggedUnit.node;
+                        draggedUnit.node = targetUnit.node;
+                        targetUnit.node = tempNode;
+                        writeToLog(`\nSwapped unit:${draggedUnit.id} <-> unit:${targetUnit.id}`);
+                    } else {
+                        writeToLog(`\nCannot swap unit:${draggedUnit.id} <-> unit:${targetUnit.id}`);
+                    }
+                } else {
+                    // If not same team, combat
+                    units = handleCombat(draggedUnit, targetUnit, draggedUnitNodeIdInt, targetNodeIdInt, units, meleeNetwork, archerNetwork, flierNetwork)}
                 
             } else {
                 // If no unit is in the target node, simply move the dragged unit to the target node
@@ -572,30 +566,30 @@ function handleUnitClick(event, nodes, units, meleeNetwork, archerNetwork, flier
         console.log(clickedUnitId)
 
         if (clickedUnit && selectedUnit) {
-            if (clickedUnit.team === selectedUnit.team) {
+            if (selectedUnit.team === clickedUnit.team) {
                 // Swap the nodes
-                const tempNode = selectedUnit.node;
-                selectedUnit.node = clickedUnit.node;
-                clickedUnit.node = tempNode;
-                writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
-                selectedUnitId = null; // Reset the selected unit
-                console.log('draw')
-                drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
-                return;
+                
+                if (networkContainsConnection(meleeNetwork, selectedUnit.node, clickedUnit.node) & networkContainsConnection(meleeNetwork, clickedUnit.node, selectedUnit.node)){
+                    const tempNode = selectedUnit.node;
+                    selectedUnit.node = clickedUnit.node;
+                    clickedUnit.node = tempNode;
+                    writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                } else {
+                    writeToLog(`\Cannot swap unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                }
             } else {
                 // Different teams: initiate combat
                 units = handleCombat(selectedUnit, clickedUnit, selectedUnit.node, clickedUnit.node, units, meleeNetwork, archerNetwork, flierNetwork);
-                selectedUnitId = null; // Reset the selected unit
-                console.log('draw')
-                drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
-                return;
             }
         }
+        selectedUnitId = null; // Reset the selected unit after using it
+    } else {
+        // If no unit is selected, select this unit
+        selectedUnitId = event.target.dataset.unitId;
+        writeToLog(`\nSelected unit: ${selectedUnitId}`);
     }
 
-    // If no unit is selected, select this unit
-    selectedUnitId = event.target.dataset.unitId;
-    writeToLog(`\nSelected unit: ${selectedUnitId}`);
+    drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
 }
 
 // Function to handle click on a node
@@ -610,12 +604,17 @@ function handleNodeClick(event, nodes, units, meleeNetwork, archerNetwork, flier
 
             if (targetUnit) {
                 // If there's a unit on the target node, handle combat or swapping
-                if (targetUnit.team === selectedUnit.team) {
-                    // Friendly unit: swap nodes
-                    const tempNode = selectedUnit.node;
-                    selectedUnit.node = targetNodeId;
-                    targetUnit.node = tempNode;
-                    writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${targetUnit.id}`);
+                if (selectedUnit.team === targetUnit.team) {
+                    if (networkContainsConnection(meleeNetwork, selectedUnit.node, clickedUnit.node) & networkContainsConnection(meleeNetwork, clickedUnit.node, selectedUnit.node)){
+                        // Friendly unit: swap nodes
+                        const tempNode = selectedUnit.node;
+                        selectedUnit.node = targetNodeId;
+                        targetUnit.node = tempNode;
+                        writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${targetUnit.id}`);
+                    } else {
+                        writeToLog(`\Cannot swap unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                    }
+                    
                 } else {
                     // Enemy unit: initiate combat
                     units = handleCombat(selectedUnit, targetUnit, selectedUnit.node, targetNodeId, units, meleeNetwork, archerNetwork, flierNetwork);

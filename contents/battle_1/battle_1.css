@@ -42,7 +42,7 @@ button {
     position: relative;
     width: 100vh;
     height: 100vh;
-    background: url('battle__durins_chasm.png') no-repeat center center;
+    background: url('battle_1__durins_chasm.png') no-repeat center center;
     background-size: cover;
     border: 1px solid #ccc;
 }

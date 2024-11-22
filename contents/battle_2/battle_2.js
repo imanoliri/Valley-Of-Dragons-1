@@ -1,5 +1,59 @@
+async function fetchBattleData() {
+    try {
+        
+        const response_nodes = await fetch('nodes.json');
+        if (!response_nodes.ok) {
+            throw new Error(`HTTP error! status: ${response_nodes.status}`);
+        }
+        const response_units = await fetch('units.json');
+        if (!response_units.ok) {
+            throw new Error(`HTTP error! status: ${response_units.status}`);
+        }
+        const response_meleeNetwork = await fetch('melee_interactions.json');
+        if (!response_meleeNetwork.ok) {
+            throw new Error(`HTTP error! status: ${response_meleeNetwork.status}`);
+        }
+        const response_archerNetwork = await fetch('archer_interactions.json');
+        if (!response_archerNetwork.ok) {
+            throw new Error(`HTTP error! status: ${response_archerNetwork.status}`);
+        }
+        const response_flierNetwork = await fetch('flier_interactions.json');
+        if (!response_flierNetwork.ok) {
+            throw new Error(`HTTP error! status: ${response_flierNetwork.status}`);
+        }
 
-document.addEventListener("DOMContentLoaded", function () {
+
+
+        nodes = await response_nodes.json();
+        console.log("Nodes fetched:", nodes);
+        units = await response_units.json();
+        console.log("Units fetched:", units);
+
+        meleeNetwork = await response_meleeNetwork.json();
+        console.log("meleeNetwork fetched:", meleeNetwork);
+        archerNetwork = await response_archerNetwork.json();
+        console.log("archerNetwork fetched:", archerNetwork);
+        flierNetwork = await response_flierNetwork.json();
+        console.log("flierNetwork fetched:", flierNetwork);
+
+    } catch (error) {
+        console.error('Error fetching JSON:', error);
+    }
+}
+
+let deploymentLevel
+let nodes
+let units
+
+let meleeNetwork
+let archerNetwork
+let flierNetwork
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchBattleData().then(createBattle);
+});
+    
+function createBattle() {
 
     // Get HTML elements
     const battlefield = document.getElementById("battlefield");
@@ -17,66 +71,33 @@ document.addEventListener("DOMContentLoaded", function () {
     setDifficultyButton.addEventListener("click", function() {
         location.reload();
     });
-
-
     
+
     // Nodes & units
-    let deploymentLevel = parseInt(slider.value, 10);
-    let nodes = createNodes();
-    let units = createUnits(deploymentLevel);
+    deploymentLevel = parseInt(slider.value, 10);
+    nodes = createNodes(nodes);
+    units = createUnits(units, deploymentLevel);
 
     
     // Networks
-    let meleeNetwork = createMeleeNetwork();
-    let archerNetwork = createArcherNetwork();
-    let flierNetwork = true;
+    meleeNetwork = createMeleeNetwork(meleeNetwork);
+    archerNetwork = createArcherNetwork(archerNetwork);
+    flierNetwork = createFlierNetwork(flierNetwork);
 
     
     // Set CSS variables
     const numberNodes = nodes.length;
-    const nodeSizePercentage = 100/Math.sqrt(numberNodes**2) * 2.7;
+    const nodeSizePercentage = 1.8 * 100/Math.sqrt(numberNodes**2);
     let nodeSize = vhToPixels(`${nodeSizePercentage}vh`);
     setCSSVariables(nodeSizePercentage)
 
-function setCSSVariables(nodeSizePercentage) {
-    document.documentElement.style.setProperty('--node-size', `${nodeSizePercentage}vh`);
-    document.documentElement.style.setProperty('--unit-size', `${nodeSizePercentage}vh`);
-    document.documentElement.style.setProperty('--node-size-highlight', `${nodeSizePercentage*1.2}vh`);
-    document.documentElement.style.setProperty('--unit-size-highlight', `${nodeSizePercentage*1.2}vh`);
-}
-
     drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize)
-});
+}
 
 
 // CREATE functions
-function createNodes() {
-    
-    let nodes = [{id: 1, x: 3.0, y: 15.0}, {id: 2, x: 4.0, y: 15.0}, {id: 3, x: 5.0, y: 15.0},
-                    {id: 4, x: 3.5, y: 14.0}, {id: 5, x: 4.5, y: 14.0},
-                    {id: 6, x: 3.0, y: 13.0}, {id: 7, x: 4.0, y: 13.0}, {id: 8, x: 5.0, y: 13.0},
-                    {id: 9, x: 3.5, y: 12.0}, {id: 10, x: 4.5, y: 12.0},
-                    {id: 11, x: 3.0, y: 11.0}, {id: 12, x: 4.0, y: 11.0}, {id: 13, x: 5.0, y: 11.0},
-                    {id: 14, x: 3.0, y: 10.0}, {id: 15, x: 4.0, y: 10.0},
-                    {id: 16, x: 3.5, y: 9.0}, {id: 17, x: 4.5, y: 9.0},
-                    {id: 18, x: 3.0, y: 8.0}, {id: 19, x: 4.0, y: 8.0},
-                    {id: 20, x: 3.5, y: 7.0}, {id: 21, x: 4.5, y: 7.0},
-                    {id: 22, x: 4.0, y: 6.0}, {id: 23, x: 5.0, y: 6.0}, 
-                    {id: 24, x: 3.5, y: 5.0}, {id: 25, x: 4.5, y: 5.0},
-                    {id: 26, x: 3.0, y: 4.0}, {id: 27, x: 4.0, y: 4.0}, {id: 28, x: 5.0, y: 4.0},
-                    {id: 29, x: 3.5, y: 3.0}, {id: 30, x: 4.5, y: 3.0},
-                    {id: 31, x: 3.0, y: 2.0}, {id: 32, x: 4.0, y: 2.0}, {id: 33, x: 5.0, y: 2.0},
-                    {id: 34, x: 3.5, y: 1.0}, {id: 35, x: 4.5, y: 1.0}, {id: 37, x: 1.0, y: 12.0},
-                    {id: 38, x: 2.0, y: 10.0}, 
-                    {id: 39, x: 1.0, y: 8.0}, 
-                    {id: 40, x: 1.5, y: 5.0}, 
-                    {id: 41, x: 7.0, y: 12.0}, 
-                    {id: 42, x: 6.0, y: 10.0}, 
-                    {id: 43, x: 6.5, y: 8.0}, 
-                    {id: 44, x: 5.5, y: 6.5}, 
-                    {id: 45, x: 6.5, y: 5.0}]
-
-    return invertYScale(nodes)
+function createNodes(nodes) {
+    return invertYScale(nodes) 
 }
 
 function invertYScale(nodes) {
@@ -87,43 +108,22 @@ function invertYScale(nodes) {
     }));
 }
 
-function createUnits(deploymentLevel) {
-    // const dragonRiderHealth = 12 - 2 * Math.max((deploymentLevel - 2), 0);
-    let units =  [{id: 1, team: 2, name: "Lich King", type: "A", attack: 6, defense: 1, health: 20, node: 6, min_deployment: 1, max_deployment: 3},
-        {id: 2, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 1, min_deployment: 1, max_deployment: 3},
-        {id: 3, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 3, min_deployment: 1, max_deployment: 3},
-        {id: 4, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 5, min_deployment: 1, max_deployment: 3},
-        {id: 5, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 8, min_deployment: 1, max_deployment: 3},
-        {id: 6, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 10, min_deployment: 1, max_deployment: 3},
-        {id: 7, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 12, min_deployment: 1, max_deployment: 3},
-        {id: 8, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 14, min_deployment: 2, max_deployment: 3},
-        {id: 9, team: 2, name: "Skeleton Archer", type: "A", attack: 2, defense: 1, health: 6, node: 16, min_deployment: 3, max_deployment: 3},
-        {id: 10, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 2, min_deployment: 1, max_deployment: 3},
-        {id: 11, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 4, min_deployment: 1, max_deployment: 3},
-        {id: 12, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 7, min_deployment: 1, max_deployment: 3},
-        {id: 13, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 9, min_deployment: 1, max_deployment: 3},
-        {id: 14, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 11, min_deployment: 1, max_deployment: 3},
-        {id: 15, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 13, min_deployment: 1, max_deployment: 3},
-        {id: 16, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 15, min_deployment: 2, max_deployment: 3},
-        {id: 17, team: 2, name: "Skeleton Soldier", type: "M", attack: 2, defense: 1, health: 6, node: 17, min_deployment: 3, max_deployment: 3},
-        {id: 18, team: 1, name: "Dragon Rider", type: "F", attack: 4, defense: 2, health: 12, node: 37, min_deployment: 1, max_deployment: 3},
-        {id: 19, team: 1, name: "Dragon Rider", type: "F", attack: 4, defense: 2, health: 12, node: 38, min_deployment: 1, max_deployment: 3},
-        {id: 20, team: 1, name: "Dragon Rider", type: "F", attack: 4, defense: 2, health: 12, node: 41, min_deployment: 1, max_deployment: 3},
-        {id: 21, team: 1, name: "Dragon Rider", type: "F", attack: 4, defense: 2, health: 12, node: 42, min_deployment: 1, max_deployment: 2},
-        {id: 22, team: 1, name: "Dragon Rider", type: "F", attack: 4, defense: 2, health: 12, node: 39, min_deployment: 1, max_deployment: 3}];
-    units = units.filter(unit => unit.min_deployment <= deploymentLevel && deploymentLevel <= unit.max_deployment);
+function createUnits(units, deploymentLevel) {
+    units = units.filter(unit => (unit.min_deployment <= deploymentLevel) & (deploymentLevel <=  unit.max_deployment));
     return units
 }
 
-function createMeleeNetwork() {
-    return [[1, 2], [1, 4], [2, 1], [2, 3], [2, 4], [2, 5], [3, 2], [3, 5], [4, 1], [4, 2], [4, 5], [4, 6], [4, 7], [5, 2], [5, 3], [5, 4], [5, 7], [5, 8], [6, 4], [6, 7], [6, 9], [7, 4], [7, 5], [7, 6], [7, 8], [7, 9], [7, 10], [8, 5], [8, 7], [8, 10], [9, 6], [9, 7], [9, 10], [9, 11], [9, 12], [10, 7], [10, 8], [10, 9], [10, 12], [10, 13], [11, 9], [11, 12], [11, 14], [11, 15], [12, 9], [12, 10], [12, 11], [12, 13], [12, 14], [12, 15], [13, 10], [13, 12], [13, 15], [14, 11], [14, 12], [14, 15], [14, 16], [15, 11], [15, 12], [15, 13], [15, 14], [15, 16], [15, 17], [16, 14], [16, 15], [16, 17], [16, 18], [16, 19], [17, 15], [17, 16], [17, 19], [18, 16], [18, 19], [18, 20], [19, 16], [19, 17], [19, 18], [19, 20], [19, 21], [20, 18], [20, 19], [20, 21], [20, 22], [21, 19], [21, 20], [21, 22], [21, 23], [22, 20], [22, 21], [22, 23], [22, 24], [22, 25], [23, 21], [23, 22], [23, 25], [24, 22], [24, 25], [24, 26], [24, 27], [25, 22], [25, 23], [25, 24], [25, 27], [25, 28], [26, 24], [26, 27], [26, 29], [27, 24], [27, 25], [27, 26], [27, 28], [27, 29], [27, 30], [28, 25], [28, 27], [28, 30], [29, 26], [29, 27], [29, 30], [29, 31], [29, 32], [30, 27], [30, 28], [30, 29], [30, 32], [30, 33], [31, 29], [31, 32], [31, 34], [32, 29], [32, 30], [32, 31], [32, 33], [32, 34], [32, 35], [33, 30], [33, 32], [33, 35], [34, 31], [34, 32], [34, 35], [35, 32], [35, 33], [35, 34]]
-}
-function createArcherNetwork() {
-    return [[37, 6], [37, 11], [37, 14], [38, 9], [38, 11], [38, 12], [38, 14], [38, 15], [38, 16], [38, 18], [38, 19], [39, 14], [39, 18], [40, 20], [40, 24], [40, 26], [40, 29], [6, 37], [11, 37], [14, 37], [9, 38], [11, 38], [12, 38], [14, 38], [15, 38], [16, 38], [18, 38], [19, 38], [14, 39], [18, 39], [20, 40], [24, 40], [26, 40], [29, 40], [41, 8], [41, 13], [42, 10], [42, 12], [42, 13], [42, 15], [42, 17], [42, 19], [43, 17], [43, 21], [43, 23], [45, 21], [45, 23], [45, 25], [45, 28], [45, 30], [8, 41], [13, 41], [10, 42], [12, 42], [13, 42], [15, 42], [17, 42], [19, 42], [17, 43], [21, 43], [23, 43], [21, 45], [23, 45], [25, 45], [28, 45], [30, 45]]
+function createMeleeNetwork(meleeNetwork) {
+    return meleeNetwork
 }
 
-function createFlierNetwork() {
-    return []
+function createArcherNetwork(archerNetwork) {
+    return archerNetwork
+
+}
+
+function createFlierNetwork(flierNetwork) {
+    return flierNetwork
 }
 
 function createPairs(element, list) {
@@ -152,6 +152,15 @@ function vhToPixels(value) {
     const pixels = (window.innerHeight * numericValue) / 100;
     return pixels;
 }
+
+
+function setCSSVariables(nodeSizePercentage) {
+    document.documentElement.style.setProperty('--node-size', `${nodeSizePercentage}vh`);
+    document.documentElement.style.setProperty('--unit-size', `${nodeSizePercentage}vh`);
+    document.documentElement.style.setProperty('--node-size-highlight', `${nodeSizePercentage*1.2}vh`);
+    document.documentElement.style.setProperty('--unit-size-highlight', `${nodeSizePercentage*1.2}vh`);
+}
+
 
 // DRAW functions
 function drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize){
@@ -190,11 +199,14 @@ function drawNodes(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNet
         div.style.top = `${node.y * nodeSize}px`;
         div.dataset.nodeId = node.id; // Assign the node ID as a data attribute
 
-        // Add drag and drop event handlers for the nodes
+        // Drag and drop callbacks
         div.addEventListener("dragover", handleDragOver);
         div.addEventListener("drop", (event) => {handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
         div.addEventListener('mouseenter', (event) => {handleNodeHoverHighlightAccessibleUnitsNodes(event, units, meleeNetwork, archerNetwork, flierNetwork);});
         div.addEventListener('mouseleave', handleNodeLeaveHighlight);
+
+        // Click and click callbacks
+        div.addEventListener('click', (event) => {handleNodeClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
 
         battlefield.appendChild(div);
     });
@@ -239,12 +251,17 @@ function drawUnits(nodes, units, nodeSize, meleeNetwork, archerNetwork, flierNet
         circle.appendChild(tooltip);
         battlefield.appendChild(circle); // Append the unit circle to the battlefield
 
-        // Drag event handler
+        // Drag and drop callbacks
         circle.addEventListener('mouseenter', (event) => {handleNodeHoverHighlightAccessibleUnitsNodes(event, units, meleeNetwork, archerNetwork, flierNetwork);});
         circle.addEventListener('mouseleave', handleNodeLeaveHighlight);
         circle.addEventListener("dragstart", handleDragStart);
         circle.addEventListener("dragover", handleDragOver);
         circle.addEventListener("drop", (event) => {handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
+        
+
+        // Click and click callback
+        circle.addEventListener("click", (event) => {handleUnitClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);});
+
     });
 }
 
@@ -267,9 +284,6 @@ function drawUnitsTable(units) {
 }
 
 function createConnections(svg, nodes, nodeSize, network, color, width, dashArray, lateralOffset, curvedLine, focalPointX, focalPointY, curvatureStrength) {
-    if (network === true) {
-        return
-    }
     network.forEach(pair => {
         const node1 = nodes.find(node => node.id === pair[0]);
         const node2 = nodes.find(node => node.id === pair[1]);
@@ -427,9 +441,6 @@ function handleNodeHoverHighlightAccessibleUnitsNodes(event, units, meleeNetwork
 
     // Find and highlight all reachable nodes for each network
     networksToUse.forEach(network => {
-        if (network === true) {
-            return
-        }
         const accessibleNodes = network
             .filter(pair => pair[0] === nodeId || pair[1] === nodeId)
             .map(pair => (pair[0] === nodeId ? pair[1] : pair[0]));
@@ -495,7 +506,19 @@ function handleDrop(event, nodes, units, meleeNetwork, archerNetwork, flierNetwo
             const targetUnit = units.find(unit => unit.node === targetNodeIdInt); 
 
             if (targetUnit) {
-                units = handleCombat(draggedUnit, targetUnit, draggedUnitNodeIdInt, targetNodeIdInt, units, meleeNetwork, archerNetwork, flierNetwork)
+                if (draggedUnit.team === targetUnit.team) {
+                    // Swap the nodes
+                    if (networkContainsConnection(meleeNetwork, draggedUnit.node, targetUnit.node) & networkContainsConnection(meleeNetwork, targetUnit.node, draggedUnit.node)){
+                        const tempNode = draggedUnit.node;
+                        draggedUnit.node = targetUnit.node;
+                        targetUnit.node = tempNode;
+                        writeToLog(`\nSwapped unit:${draggedUnit.id} <-> unit:${targetUnit.id}`);
+                    } else {
+                        writeToLog(`\nCannot swap unit:${draggedUnit.id} <-> unit:${targetUnit.id}`);
+                    }
+                } else {
+                    // If not same team, combat
+                    units = handleCombat(draggedUnit, targetUnit, draggedUnitNodeIdInt, targetNodeIdInt, units, meleeNetwork, archerNetwork, flierNetwork)}
                 
             } else {
                 // If no unit is in the target node, simply move the dragged unit to the target node
@@ -525,11 +548,102 @@ function handleMoveDrag(u, x, y, meleeNetwork, archerNetwork, flierNetwork) {
 }
 
 function networkContainsConnection(network, x, y) {
-    if (network === true) {
-        return true
-    }
     return network.some(pair => pair[0] === x && pair[1] === y);
 }
+
+// CLICK AND CLICK callbacks
+let selectedUnitId = null; // Variable to store the ID of the selected unit
+
+// Function to handle click on a unit
+function handleUnitClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize) {
+    console.log(selectedUnitId)
+    // If a unit is already selected and the user clicks on another unit of the same team, swap positions
+    if (selectedUnitId) {
+        console.log(selectedUnitId)
+        const clickedUnitId = event.target.dataset.unitId;
+        const clickedUnit = units.find(unit => unit.id == clickedUnitId);
+        const selectedUnit = units.find(unit => unit.id == selectedUnitId);
+        console.log(clickedUnitId)
+
+        if (clickedUnit && selectedUnit) {
+            if (selectedUnit.team === clickedUnit.team) {
+                // Swap the nodes
+                
+                if (networkContainsConnection(meleeNetwork, selectedUnit.node, clickedUnit.node) & networkContainsConnection(meleeNetwork, clickedUnit.node, selectedUnit.node)){
+                    const tempNode = selectedUnit.node;
+                    selectedUnit.node = clickedUnit.node;
+                    clickedUnit.node = tempNode;
+                    writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                } else {
+                    writeToLog(`\Cannot swap unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                }
+            } else {
+                // Different teams: initiate combat
+                units = handleCombat(selectedUnit, clickedUnit, selectedUnit.node, clickedUnit.node, units, meleeNetwork, archerNetwork, flierNetwork);
+            }
+        }
+        selectedUnitId = null; // Reset the selected unit after using it
+    } else {
+        // If no unit is selected, select this unit
+        selectedUnitId = event.target.dataset.unitId;
+        writeToLog(`\nSelected unit: ${selectedUnitId}`);
+    }
+
+    drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+}
+
+// Function to handle click on a node
+function handleNodeClick(event, nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize) {
+    if (selectedUnitId) {
+        const targetNodeId = parseInt(event.target.dataset.nodeId);
+        const selectedUnit = units.find(unit => unit.id == selectedUnitId);
+
+        if (selectedUnit) {
+            // Check if there's another unit on the target node
+            const targetUnit = units.find(unit => unit.node === targetNodeId);
+
+            if (targetUnit) {
+                // If there's a unit on the target node, handle combat or swapping
+                if (selectedUnit.team === targetUnit.team) {
+                    if (networkContainsConnection(meleeNetwork, selectedUnit.node, clickedUnit.node) & networkContainsConnection(meleeNetwork, clickedUnit.node, selectedUnit.node)){
+                        // Friendly unit: swap nodes
+                        const tempNode = selectedUnit.node;
+                        selectedUnit.node = targetNodeId;
+                        targetUnit.node = tempNode;
+                        writeToLog(`\nSwapped unit:${selectedUnit.id} <-> unit:${targetUnit.id}`);
+                    } else {
+                        writeToLog(`\Cannot swap unit:${selectedUnit.id} <-> unit:${clickedUnit.id}`);
+                    }
+                    
+                } else {
+                    // Enemy unit: initiate combat
+                    units = handleCombat(selectedUnit, targetUnit, selectedUnit.node, targetNodeId, units, meleeNetwork, archerNetwork, flierNetwork);
+                }
+            } else {
+                // No unit on the target node: move the selected unit
+                handleMoveDrag(selectedUnit, selectedUnit.node, targetNodeId, meleeNetwork, archerNetwork, flierNetwork);
+            }
+
+            selectedUnitId = null; // Reset the selected unit
+            console.log('draw')
+            drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+        }
+    }
+}
+
+// Add click event listeners to units and nodes
+function addClickEventListeners() {
+    const unitCircles = document.querySelectorAll(".unit-circle");
+    unitCircles.forEach(circle => {
+        circle.addEventListener("click", handleUnitClick);
+    });
+
+    const nodeElements = document.querySelectorAll(".node");
+    nodeElements.forEach(node => {
+        node.addEventListener("click", handleNodeClick);
+    });
+}
+
 
 
 // COMBAT logic
@@ -556,6 +670,7 @@ function handleCombat(u, v, x, y, units, meleeNetwork, archerNetwork, flierNetwo
         writeToLog(`\ncannot attack unit:${u.id} -> unit:${v.id}`)
     }
 
+    console.log('filter health units')
     return units.filter(u => u.health > 0)
 }
 
@@ -631,4 +746,74 @@ function handleArcherCombat(attacker, defender, x, y, units){
     }
     return units
 }
+
+
+// Instructions Modal
+document.getElementById("instructionsButton").addEventListener("click", function() {
+    const modal = document.getElementById("instructionsModal");
+    const instructionsText = document.getElementById("instructionsText");
+
+    instructionsText.innerHTML = `
+        Welcome to Battle! This is a tactics battlefield game where two or more teams clash in a turn-based battle until one side has no units left. Each team is controlled by one human player, in a shared PC or tablet, just like a tabletop game. The players can decide on a different victory condition and some maps propose ideas. Master your strategy, plan your moves, and outwit your opponent to emerge victorious!<br><br>
+
+        <strong>Objective</strong><br>
+        The aim of the game is to eliminate all enemy units and be the last team standing. Each unit has attributes that define its strength and behavior on the battlefield, including attack, defense, health, and type. Utilize each unit’s abilities wisely to gain the upper hand.<br><br>
+
+
+        <strong>Game Mechanics</strong><ul>
+        <li><strong>Define rules:</strong> Players should set some game rules beforehand: who starts playing first, how many units per turn can each team move, can the units move and shoot, can you use two actions in a single unit to move it two times, special victory conditions, etc
+        <li><strong>Select difficulty/deployment level:</strong>  Each level has usually various levels of difficulty. 1 will be easier for the green, 3 will be easier for the orange. This controls how many units are deployed for each team ("deployment level" in the table)
+        <li><strong>Taking Turns:</strong> Players alternate turns, moving the allow number of units as specified in the first point "Define rules" by drag and dropping them. Notice the drawn networks and the type of unit to know where to move, but if you hover your mouse, the nodes where your unit can move or attack will be highlighted as a hint.
+        <li><strong>Dragging and Dropping Units:</strong><ul>
+          <li>Drag a unit to a valid new node to reposition it.
+          <li>If the target node is empty, your unit moves to occupy it.
+          <li>If a friendly unit occupies the target node, they swap places.
+          <li>If the target node has an enemy, combat occurs according to the type of the attacking unit.<br><br>
+          </ul>
+        </ul>
+
+        <strong>Unit Attributes:</strong><ul>
+           <li><strong>Attack:</strong> How much damage (in health points) the unit inflicts when attacking.
+           <li><strong>Defense:</strong> How many damage points the unit can substract from incoming attacks.
+           <li><strong>Health:</strong> The unit's life points. If this reaches 0, the unit is defeated.
+           <li><strong>Type:</strong> Units can be of type "M" (Melee), "A" (Archer), or "F" (Flier), which determine their movement and attack capabilities.<br><br>
+        </ul>
+        <strong>Types of Units:</strong><ul>
+           <li><strong>Melee Units (M) (red ring and network):</strong> Move and attack using the Melee Network (solid red lines). If you drag a melee unit to an enemy, a fight to the death begins, with attacks alternating until one unit is defeated. The attacker strikes first, dealing damage as (attacker's attack - defender's defense), with a minimum of 1 damage. If the attacker wins, it takes the place of the defeated defender.
+           <li><strong>Archer Units (A) (green ring and network):</strong> Move using the Melee Network and attacks using both the Melee the Archer Network (dashed green lines). When dragged to an enemy, an archer performs a single shot, dealing damage once with the previous formula without receiving damage in return.
+           <li><strong>Flier Units (F) (blue ring and network):</strong> Move and attack like melee units but can use both the Melee and the Flier Network (fine curved blue lines). Fliers can move more freely across the battlefield.<br><br>
+        </ul>
+
+
+        <strong>Strategies</strong><br>
+        Use melee units to engage directly and be aggresive, archers for ranged attacks to whittle the enemy down without taking damage, and fliers for superior mobility. Plan carefully and outmaneuver your opponent to win!
+    `;
+    modal.style.display = "flex";
+});
+
+document.getElementById("closeInstructionsModal").addEventListener("click", function() {
+    document.getElementById("instructionsModal").style.display = "none";
+});
+
+// Map Info Modal
+document.getElementById("mapInfoButton").addEventListener("click", function() {
+    const modal = document.getElementById("mapInfoModal");
+    const mapInfoText = document.getElementById("mapInfoText");
+
+    mapInfoText.innerHTML = `
+        Welcome to Greystone Pass! The evil Lich King's army is marching towards the Valley of Dragons and all efforts to stop them by the Order of the Dragon Knights have been in vain.<br><br>
+
+        Gather your knights at the Greystone Pass to ambush the advancing army before they can reach castle Tarn. Protect your knights in the peaks (light grey) and attack where the enemy is most vulnerable. Beware the Lich King, because it can cast deadly ranged magic attacks!<br><br>
+
+        Optional victory condition: don't let more than 3 units (apart from the Lich King) reach the south end of the map.<br><br>
+
+        Hardcore victory condition: don't let any unit other than the Lich King reac the south end of the map.
+    `;
+    modal.style.display = "flex";
+});
+
+document.getElementById("closeMapInfoModal").addEventListener("click", function() {
+    document.getElementById("mapInfoModal").style.display = "none";
+});
+
 

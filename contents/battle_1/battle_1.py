@@ -5,7 +5,7 @@ from typing import List
 
 
 def main():
-    battle_name = "battle_2"
+    battle_name = "battle_1"
     battle_dir = f"contents/{battle_name}"
     excel_file = f"{battle_dir}/{battle_name}.xlsx"
 
