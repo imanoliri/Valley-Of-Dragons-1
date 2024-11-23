@@ -633,8 +633,7 @@ function handleNodeClick(event, nodes, units, meleeNetwork, archerNetwork, flier
             }
 
             selectedUnitId = null; // Reset the selected unit
-            console.log('draw')
-            drawAll(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
+            drawMobileElements(nodes, units, meleeNetwork, archerNetwork, flierNetwork, nodeSize);
         }
     }
 }
