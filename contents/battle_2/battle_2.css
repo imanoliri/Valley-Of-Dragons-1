@@ -42,7 +42,7 @@ button {
     position: relative;
     width: 100vh;
     height: 100vh;
-    background: url('battle_2__greystone_pass.png') no-repeat center center;
+    background: var(--battle-map-file) no-repeat center center;
     background-size: cover;
     border: 1px solid #ccc;
 }
@@ -87,14 +87,6 @@ button {
     height: var(--unit-size-highlight);
 }
 
-.team-1 {
-    background-color: green;
-}
-
-.team-2 {
-    background-color: orange;
-}
-
 /* Border colors based on unit type */
 .type-A {
     border-color: green;
@@ -106,6 +98,9 @@ button {
 
 .type-F {
     border-color: blue;
+}
+.type-S {
+    border-color: white;
 }
 
 .unit-tooltip {

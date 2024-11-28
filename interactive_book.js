@@ -1,86 +1,49 @@
-document.addEventListener('DOMContentLoaded', () => {
-    window.onload = function() {
-        showTab(0);
-    }
-});
-    
-function showTab(index) {
-    var tabs = document.getElementsByClassName('tab');
-    var buttons = document.getElementsByClassName('tab-button');
-    for (var i = 0; i < tabs.length; i++) {
-        tabs[i].style.display = 'none';
-        buttons[i].classList.remove('active');
-    }
-    tabs[index].style.display = 'block';
-    buttons[index].classList.add('active');
-}
+// Load the JSON file and create tabs
+async function loadStory() {
+    try {
+        // Fetch the story_by_chapters.json file
+        const responseStoryData = await fetch('interactive_book_tabs.json');
+        const storyData = await responseStoryData.json();
+        const response_story_metadata = await fetch('story_metadata.json');
+        const story_metadata = await response_story_metadata.json();
+        console.log(story_metadata)
 
-let userName
+        document.title = story_metadata['story_name'];
+        document.querySelector("h1").textContent = story_metadata['story_name'];
 
-function sendChapterFeedback() {
-    const aspects = ["Overall", "World-Building", "Plot", "Pacing", "Dialogue", "Character Development", "Conflict/Tension", "Themes", "Emotional Impact"];
+        // Get references to tabs container and content container
+        const tabButtons = document.getElementById('tabButtons');
+        const tabContainer = document.getElementById('tabContents');
 
-    // Metadata
-    if (!userName) {
-        userName = prompt("Please enter your name (or leave blank for anonymous):") || "Anonymous";
-    }
-    const storyId = 1;
-    const chapter = document.querySelector(".tab-button.active")?.textContent.trim();
-    const currentDate = new Date().toISOString();
+        // Generate tabs and their content
+        Object.keys(storyData).forEach((chapterName, index) => {
+            // Create a tab button
+            const tabButton = document.createElement('div');
+            tabButton.className = 'tab-button';
+            tabButton.textContent = chapterName;
 
-    // Collect data from both tables
-    let chapterFeedback = { chapter: chapter, ratings: {}, comments: {} };
+            // Add click event to show content when the tab is clicked
+            tabButton.addEventListener('click', () => showTab(storyData, chapterName, tabButton, tabContainer))
 
-    // Collect ratings
-    const ratingCells = Array.from(document.querySelectorAll("#feedbackTable tr")).find(row => row.cells[0]?.textContent.trim() === "Rating")?.querySelectorAll("td[contenteditable='true']");
-    ratingCells.forEach((cell, i) => {
-        const value = parseInt(cell.innerText.trim(), 10);
-        chapterFeedback.ratings[aspects[i]] = isNaN(value) ? null : value;
-    });
-
-    // Collect comments
-    const commentCells = Array.from(document.querySelectorAll("#feedbackTable tr")).find(row => row.cells[0]?.textContent.trim() === "Comments")?.querySelectorAll("td[contenteditable='true']");
-    commentCells.forEach((cell, i) => {
-        chapterFeedback.comments[aspects[i]] = cell.innerText.trim() || null;
-    });
-
-
-    // Add metadata
-    feedbackData = [{
-        userName: userName,
-        storyID: storyId,
-        date: currentDate,
-        chapter: chapter,
-        ...chapterFeedback
-    }];
-
-
-    if (chapterFeedbackIsEmpty(chapterFeedback) !== true) {
-
-        console.log(chapterFeedback)
-
-        // Send feedback to the Netlify serverless function
-        fetch('/.netlify/functions/logFeedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(feedbackData)
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Feedback sent successfully!");
-            } else {
-                alert("Failed to send feedback. Please try again.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
+            // Create the tab container
+            tabButtons.appendChild(tabButton);
         });
+
+
+        tabButtons.children[0].classList.add('active');
+        tabContainer.innerHTML = storyData[Object.keys(storyData)[0]];
+
+    } catch (error) {
+        console.error('Error loading the story:', error);
+        document.getElementById('tabContents').textContent = 'Failed to load story. Please try again later.';
     }
 }
 
-function chapterFeedbackIsEmpty(chapterFeedback) {
-    const allRatingsAreEmpty = Object.values(chapterFeedback.ratings).every(value => value === null);
-    const allCommentsAreEmpty = Object.values(chapterFeedback.comments).every(value => value === null || value.trim() === "");
-    return allRatingsAreEmpty && allCommentsAreEmpty;
-}
+function showTab (storyData, chapterName, tabButton, tabContainer) {
+    document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
+    tabButton.classList.add('active');
+    tabContainer.innerHTML = storyData[chapterName];
+};
+
+// Load the story when the page loads
+document.addEventListener('DOMContentLoaded', loadStory);
